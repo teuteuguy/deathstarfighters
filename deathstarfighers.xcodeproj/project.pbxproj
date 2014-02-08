@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4ACE4A0C18A64E170082DDFE /* SHUStatusTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4ACE4A0B18A64E170082DDFE /* SHUStatusTableViewController.m */; };
+		4ACE4A0F18A6543F0082DDFE /* SHUMenuTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4ACE4A0E18A6543F0082DDFE /* SHUMenuTableViewController.m */; };
+		4ACE4A1318A65A090082DDFE /* SHUItemListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4ACE4A1218A65A090082DDFE /* SHUItemListViewController.m */; };
+		4ACE4A1618A693D70082DDFE /* SHUDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4ACE4A1518A693D70082DDFE /* SHUDetailViewController.m */; };
+		4ACE4A1818A696B40082DDFE /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4ACE4A1718A696B40082DDFE /* MapKit.framework */; };
+		4ADAD3E818A6B60A003ADBA4 /* death_star.png in Resources */ = {isa = PBXBuildFile; fileRef = 4ADAD3E718A6B428003ADBA4 /* death_star.png */; };
 		4AF20F4E18A61DF700D2B8E1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AF20F4D18A61DF700D2B8E1 /* Foundation.framework */; };
 		4AF20F5018A61DF700D2B8E1 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AF20F4F18A61DF700D2B8E1 /* CoreGraphics.framework */; };
 		4AF20F5218A61DF700D2B8E1 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AF20F5118A61DF700D2B8E1 /* UIKit.framework */; };
@@ -23,6 +29,7 @@
 		4AF20F7A18A61DF700D2B8E1 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4AF20F7818A61DF700D2B8E1 /* InfoPlist.strings */; };
 		4AF20F7C18A61DF700D2B8E1 /* deathstarfighersTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AF20F7B18A61DF700D2B8E1 /* deathstarfighersTests.m */; };
 		4AF20F8718A6205700D2B8E1 /* ThirdViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AF20F8618A6205700D2B8E1 /* ThirdViewController.m */; };
+		4AF20F8A18A6213200D2B8E1 /* SHUBaccaConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AF20F8918A6213100D2B8E1 /* SHUBaccaConnection.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +43,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4ACE4A0A18A64E170082DDFE /* SHUStatusTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SHUStatusTableViewController.h; sourceTree = "<group>"; };
+		4ACE4A0B18A64E170082DDFE /* SHUStatusTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SHUStatusTableViewController.m; sourceTree = "<group>"; };
+		4ACE4A0D18A6543F0082DDFE /* SHUMenuTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SHUMenuTableViewController.h; sourceTree = "<group>"; };
+		4ACE4A0E18A6543F0082DDFE /* SHUMenuTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SHUMenuTableViewController.m; sourceTree = "<group>"; };
+		4ACE4A1118A65A090082DDFE /* SHUItemListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SHUItemListViewController.h; sourceTree = "<group>"; };
+		4ACE4A1218A65A090082DDFE /* SHUItemListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SHUItemListViewController.m; sourceTree = "<group>"; };
+		4ACE4A1418A693D70082DDFE /* SHUDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SHUDetailViewController.h; sourceTree = "<group>"; };
+		4ACE4A1518A693D70082DDFE /* SHUDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SHUDetailViewController.m; sourceTree = "<group>"; };
+		4ACE4A1718A696B40082DDFE /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		4ADAD3E718A6B428003ADBA4 /* death_star.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = death_star.png; sourceTree = "<group>"; };
 		4AF20F4A18A61DF700D2B8E1 /* deathstarfighers.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = deathstarfighers.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4AF20F4D18A61DF700D2B8E1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		4AF20F4F18A61DF700D2B8E1 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -59,6 +76,8 @@
 		4AF20F7B18A61DF700D2B8E1 /* deathstarfighersTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = deathstarfighersTests.m; sourceTree = "<group>"; };
 		4AF20F8518A6205700D2B8E1 /* ThirdViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThirdViewController.h; sourceTree = "<group>"; };
 		4AF20F8618A6205700D2B8E1 /* ThirdViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThirdViewController.m; sourceTree = "<group>"; };
+		4AF20F8818A6213100D2B8E1 /* SHUBaccaConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SHUBaccaConnection.h; sourceTree = "<group>"; };
+		4AF20F8918A6213100D2B8E1 /* SHUBaccaConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SHUBaccaConnection.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,6 +85,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4ACE4A1818A696B40082DDFE /* MapKit.framework in Frameworks */,
 				4AF20F5018A61DF700D2B8E1 /* CoreGraphics.framework in Frameworks */,
 				4AF20F5218A61DF700D2B8E1 /* UIKit.framework in Frameworks */,
 				4AF20F4E18A61DF700D2B8E1 /* Foundation.framework in Frameworks */,
@@ -85,9 +105,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4ACE4A1018A659E90082DDFE /* old */ = {
+			isa = PBXGroup;
+			children = (
+				4AF20F8818A6213100D2B8E1 /* SHUBaccaConnection.h */,
+				4AF20F8918A6213100D2B8E1 /* SHUBaccaConnection.m */,
+			);
+			name = old;
+			sourceTree = "<group>";
+		};
 		4AF20F4118A61DF700D2B8E1 = {
 			isa = PBXGroup;
 			children = (
+				4ADAD3E718A6B428003ADBA4 /* death_star.png */,
 				4AF20F5318A61DF700D2B8E1 /* deathstarfighers */,
 				4AF20F7518A61DF700D2B8E1 /* deathstarfighersTests */,
 				4AF20F4C18A61DF700D2B8E1 /* Frameworks */,
@@ -107,6 +137,7 @@
 		4AF20F4C18A61DF700D2B8E1 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4ACE4A1718A696B40082DDFE /* MapKit.framework */,
 				4AF20F4D18A61DF700D2B8E1 /* Foundation.framework */,
 				4AF20F4F18A61DF700D2B8E1 /* CoreGraphics.framework */,
 				4AF20F5118A61DF700D2B8E1 /* UIKit.framework */,
@@ -118,6 +149,7 @@
 		4AF20F5318A61DF700D2B8E1 /* deathstarfighers */ = {
 			isa = PBXGroup;
 			children = (
+				4ACE4A1018A659E90082DDFE /* old */,
 				4AF20F5C18A61DF700D2B8E1 /* AppDelegate.h */,
 				4AF20F5D18A61DF700D2B8E1 /* AppDelegate.m */,
 				4AF20F5F18A61DF700D2B8E1 /* Main.storyboard */,
@@ -129,6 +161,14 @@
 				4AF20F5418A61DF700D2B8E1 /* Supporting Files */,
 				4AF20F8518A6205700D2B8E1 /* ThirdViewController.h */,
 				4AF20F8618A6205700D2B8E1 /* ThirdViewController.m */,
+				4ACE4A0A18A64E170082DDFE /* SHUStatusTableViewController.h */,
+				4ACE4A0B18A64E170082DDFE /* SHUStatusTableViewController.m */,
+				4ACE4A0D18A6543F0082DDFE /* SHUMenuTableViewController.h */,
+				4ACE4A0E18A6543F0082DDFE /* SHUMenuTableViewController.m */,
+				4ACE4A1118A65A090082DDFE /* SHUItemListViewController.h */,
+				4ACE4A1218A65A090082DDFE /* SHUItemListViewController.m */,
+				4ACE4A1418A693D70082DDFE /* SHUDetailViewController.h */,
+				4ACE4A1518A693D70082DDFE /* SHUDetailViewController.m */,
 			);
 			path = deathstarfighers;
 			sourceTree = "<group>";
@@ -241,6 +281,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4ADAD3E818A6B60A003ADBA4 /* death_star.png in Resources */,
 				4AF20F6918A61DF700D2B8E1 /* Images.xcassets in Resources */,
 				4AF20F5818A61DF700D2B8E1 /* InfoPlist.strings in Resources */,
 				4AF20F6118A61DF700D2B8E1 /* Main.storyboard in Resources */,
@@ -262,11 +303,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4ACE4A1318A65A090082DDFE /* SHUItemListViewController.m in Sources */,
 				4AF20F6718A61DF700D2B8E1 /* SecondViewController.m in Sources */,
+				4AF20F8A18A6213200D2B8E1 /* SHUBaccaConnection.m in Sources */,
 				4AF20F8718A6205700D2B8E1 /* ThirdViewController.m in Sources */,
+				4ACE4A0F18A6543F0082DDFE /* SHUMenuTableViewController.m in Sources */,
+				4ACE4A1618A693D70082DDFE /* SHUDetailViewController.m in Sources */,
 				4AF20F5E18A61DF700D2B8E1 /* AppDelegate.m in Sources */,
 				4AF20F6418A61DF700D2B8E1 /* FirstViewController.m in Sources */,
 				4AF20F5A18A61DF700D2B8E1 /* main.m in Sources */,
+				4ACE4A0C18A64E170082DDFE /* SHUStatusTableViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -477,6 +523,7 @@
 				4AF20F8118A61DF700D2B8E1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		4AF20F8218A61DF700D2B8E1 /* Build configuration list for PBXNativeTarget "deathstarfighersTests" */ = {
 			isa = XCConfigurationList;
@@ -485,6 +532,7 @@
 				4AF20F8418A61DF700D2B8E1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

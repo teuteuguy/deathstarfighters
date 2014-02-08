@@ -8,31 +8,104 @@
 
 #import "ThirdViewController.h"
 
-@interface ThirdViewController ()
+#import "SHUMenuTableViewController.h"
 
+#define shubaccaQueue1 dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0 ) //1
+#define shubaccaGetIDsUrl @"http://api.shubacca.com/shu?consumer_key=4a8e628392a504eb746c37e1b0044f0f&sort=id,desc" //2
+
+@interface ThirdViewController () {
+}
 @end
 
 @implementation ThirdViewController
 
-- (id)initWithStyle:(UITableViewStyle)style
+@synthesize shus;
+
+
+- (void)awakeFromNib
 {
-    self = [super initWithStyle:style];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
+    [super awakeFromNib];
 }
 
 - (void)viewDidLoad
 {
+    //shubaccaConnection = [SHUBaccaConnection sharedSHUBaccaConnection];
+    //[shubaccaConnection update];
+    
     [super viewDidLoad];
+    
+    self.navigationItem.title = @"SHUs";
+
+    dispatch_async(shubaccaQueue1, ^{
+        NSData* data = [NSData dataWithContentsOfURL:[NSURL URLWithString:shubaccaGetIDsUrl]];
+        [self performSelectorOnMainThread:@selector(fetchedIDs:) withObject:data waitUntilDone:YES];
+    });
+    
 
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
  
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+
+//    self.navigationItem.leftBarButtonItem = self.editButtonItem;
+//    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject:)];
+//    self.navigationItem.rightBarButtonItem = addButton;
 }
+
+//- (void)insertNewObject:(id)sender
+//{
+//    if (!_objects) {
+//        _objects = [[NSMutableArray alloc] init];
+//    }
+//    [_objects insertObject:[NSDate date] atIndex:0];
+//    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+//    [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+//}
+
+
+- (void)fetchedIDs:(NSData *)responseData {
+    //parse out the json data
+    NSError * error;
+    
+    NSArray * responseArray = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableContainers error:&error];
+    
+    if ( error != Nil ) {
+        NSLog( @"Could not make connection with server" );
+    } else {
+        
+        if ( shus == Nil ) {
+            shus = [[NSMutableArray alloc] init];
+        }
+        [shus removeAllObjects];
+
+        for( NSDictionary * object in responseArray ) {
+//
+//            NSURL * url = [NSURL URLWithString:[NSString stringWithFormat:@"http://api.shubacca.com/shu/%@/status?consumer_key=4a8e628392a504eb746c37e1b0044f0f&sort=id,desc&limit=2", [object valueForKey:@"id"]]];
+//            
+//            NSData* data = [NSData dataWithContentsOfURL:url];
+//            NSArray * statusArray = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
+//            
+//            if ( error != Nil ) {
+//                NSLog( @"Could not make status connection with server" );
+//            } else {
+//                
+//                NSMutableDictionary * dict = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
+//                                              [object valueForKey:@"id"], @"id",
+//                                              [[NSDictionary alloc] initWithDictionary:object], @"array",
+//                                              nil];
+            [shus insertObject:object atIndex:0];
+            
+            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+            [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+//
+//            }
+//            
+        }
+    }
+}
+
+
 
 - (void)didReceiveMemoryWarning
 {
@@ -44,25 +117,33 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-#warning Potentially incomplete method implementation.
     // Return the number of sections.
-    return 0;
+    //NSLog( @"numberOfSectionsInTableView" );
+    return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-#warning Incomplete method implementation.
     // Return the number of rows in the section.
-    return 0;
+    int nb_of_rows = [shus count];
+    //NSLog( @"%i", nb_of_rows );
+    return nb_of_rows;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *CellIdentifier = @"Cell";
+    static NSString *CellIdentifier = @"SHUIDCell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     
     // Configure the cell...
-    
+//    if (cell == nil) {
+//        cell = [[UITableViewCell alloc] init];
+//    }
+//    NSLog( @"%i", [indexPath row] );
+//    _objects[indexPath.row]
+    cell.detailTextLabel.text = [shus[indexPath.row] valueForKey:@"id"];//[[[shubaccaConnection shu_status] objectAtIndex:[indexPath row]] valueForKey:@"id"];
+    cell.textLabel.text = [shus[indexPath.row] valueForKey:@"description"];
+
     return cell;
 }
 
@@ -105,7 +186,7 @@
 }
 */
 
-/*
+
 #pragma mark - Navigation
 
 // In a story board-based application, you will often want to do a little preparation before navigation
@@ -113,8 +194,16 @@
 {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
+    //NSLog([sender description]);
+    
+    if ([[segue identifier] isEqualToString:@"showMenu"]) {
+        NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
+//        //NSDate *object = _objects[indexPath.row];
+        //[[segue destinationViewController] navigationItem].title = [shus[indexPath.row] valueForKey:@"id"];
+        //NSLog( @"%@", [shus[indexPath.row] valueForKey:@"id"] );
+        [[segue destinationViewController] setItemSHU:shus[indexPath.row]];
+    }
 }
 
- */
 
 @end

@@ -8,6 +8,15 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ThirdViewController : UITableViewController
+#import "SHUBaccaConnection.h"
+
+@interface ThirdViewController : UITableViewController {
+    //SHUBaccaConnection  * shubaccaConnection;
+    NSMutableArray  * shus;
+}
+
+@property (nonatomic, retain) NSMutableArray    * shus;
+
+//@property (nonatomic, retain) SHUBaccaConnection    * shubaccaConnection;
 
 @end
