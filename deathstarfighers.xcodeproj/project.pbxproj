@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4A76E38518A7191F00434AF4 /* splashscreen.png in Resources */ = {isa = PBXBuildFile; fileRef = 4A76E38318A718DF00434AF4 /* splashscreen.png */; };
 		4ACE4A0C18A64E170082DDFE /* SHUStatusTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4ACE4A0B18A64E170082DDFE /* SHUStatusTableViewController.m */; };
 		4ACE4A0F18A6543F0082DDFE /* SHUMenuTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4ACE4A0E18A6543F0082DDFE /* SHUMenuTableViewController.m */; };
 		4ACE4A1318A65A090082DDFE /* SHUItemListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4ACE4A1218A65A090082DDFE /* SHUItemListViewController.m */; };
@@ -43,6 +44,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4A76E38318A718DF00434AF4 /* splashscreen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = splashscreen.png; sourceTree = "<group>"; };
 		4ACE4A0A18A64E170082DDFE /* SHUStatusTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SHUStatusTableViewController.h; sourceTree = "<group>"; };
 		4ACE4A0B18A64E170082DDFE /* SHUStatusTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SHUStatusTableViewController.m; sourceTree = "<group>"; };
 		4ACE4A0D18A6543F0082DDFE /* SHUMenuTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SHUMenuTableViewController.h; sourceTree = "<group>"; };
@@ -108,6 +110,8 @@
 		4ACE4A1018A659E90082DDFE /* old */ = {
 			isa = PBXGroup;
 			children = (
+				4ACE4A0B18A64E170082DDFE /* SHUStatusTableViewController.m */,
+				4ACE4A0A18A64E170082DDFE /* SHUStatusTableViewController.h */,
 				4AF20F8818A6213100D2B8E1 /* SHUBaccaConnection.h */,
 				4AF20F8918A6213100D2B8E1 /* SHUBaccaConnection.m */,
 			);
@@ -117,6 +121,7 @@
 		4AF20F4118A61DF700D2B8E1 = {
 			isa = PBXGroup;
 			children = (
+				4A76E38318A718DF00434AF4 /* splashscreen.png */,
 				4ADAD3E718A6B428003ADBA4 /* death_star.png */,
 				4AF20F5318A61DF700D2B8E1 /* deathstarfighers */,
 				4AF20F7518A61DF700D2B8E1 /* deathstarfighersTests */,
@@ -161,8 +166,6 @@
 				4AF20F5418A61DF700D2B8E1 /* Supporting Files */,
 				4AF20F8518A6205700D2B8E1 /* ThirdViewController.h */,
 				4AF20F8618A6205700D2B8E1 /* ThirdViewController.m */,
-				4ACE4A0A18A64E170082DDFE /* SHUStatusTableViewController.h */,
-				4ACE4A0B18A64E170082DDFE /* SHUStatusTableViewController.m */,
 				4ACE4A0D18A6543F0082DDFE /* SHUMenuTableViewController.h */,
 				4ACE4A0E18A6543F0082DDFE /* SHUMenuTableViewController.m */,
 				4ACE4A1118A65A090082DDFE /* SHUItemListViewController.h */,
@@ -281,6 +284,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4A76E38518A7191F00434AF4 /* splashscreen.png in Resources */,
 				4ADAD3E818A6B60A003ADBA4 /* death_star.png in Resources */,
 				4AF20F6918A61DF700D2B8E1 /* Images.xcassets in Resources */,
 				4AF20F5818A61DF700D2B8E1 /* InfoPlist.strings in Resources */,

@@ -34,6 +34,9 @@
     
     [super viewDidLoad];
     
+    [self.tableView setBackgroundView: nil];
+    [self.tableView setBackgroundColor:[UIColor colorWithRed:122.0 green:155.0 blue:207.0 alpha:1]];
+    
     self.navigationItem.title = @"SHUs";
 
     dispatch_async(shubaccaQueue1, ^{
@@ -52,6 +55,17 @@
 //    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject:)];
 //    self.navigationItem.rightBarButtonItem = addButton;
 }
+
+- (void)viewWillAppear:(BOOL)animated {
+    //    UIView * bview = [[UIView alloc] init];
+    //    bview.backgroundColor = [UIColor colorWithRed:119/255.0 green:153/255.0 blue:203/255.0 alpha:1];
+    //    [self.tableView setBackgroundView:bview];
+    UIColor * backgroundcolor = [UIColor colorWithRed:119/255.0 green:153/255.0 blue:203/255.0 alpha:1];
+    [self.tableView setBackgroundColor:backgroundcolor];
+    [self.tableView setSeparatorColor:backgroundcolor];
+    [self.navigationController.navigationBar setBackgroundColor:backgroundcolor];
+}
+
 
 //- (void)insertNewObject:(id)sender
 //{
@@ -135,14 +149,31 @@
     static NSString *CellIdentifier = @"SHUIDCell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     
+    UILabel * title = (UILabel *)[cell viewWithTag:100];
+    UILabel * telephone = (UILabel *)[cell viewWithTag:101];
+    UILabel * last_known_gps_datetime = (UILabel *)[cell viewWithTag:102];
+    UILabel * secs_ago = (UILabel *)[cell viewWithTag:103];
+
+    title.text = [shus[indexPath.row] valueForKey:@"description"];
+    telephone.text = [shus[indexPath.row] valueForKey:@"telephone_number"];
+    last_known_gps_datetime.text = [shus[indexPath.row] valueForKey:@"last_known_gps_datetime"];
+
     // Configure the cell...
-//    if (cell == nil) {
-//        cell = [[UITableViewCell alloc] init];
-//    }
-//    NSLog( @"%i", [indexPath row] );
-//    _objects[indexPath.row]
-    cell.detailTextLabel.text = [shus[indexPath.row] valueForKey:@"id"];//[[[shubaccaConnection shu_status] objectAtIndex:[indexPath row]] valueForKey:@"id"];
-    cell.textLabel.text = [shus[indexPath.row] valueForKey:@"description"];
+    NSDateFormatter * formatter = [[NSDateFormatter alloc] init];
+    [formatter setTimeZone:[NSTimeZone timeZoneWithName:@"SGT"]];
+    [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    int interval = (int)[[NSDate date] timeIntervalSinceDate:[formatter dateFromString: [shus[indexPath.row] valueForKey:@"last_known_gps_datetime"]]];
+    if ( interval < 60 ) {
+        secs_ago.text = [NSString stringWithFormat:@"%.02is ago", interval];
+    } else if ( interval < 60 * 60 ) {
+        secs_ago.text = [NSString stringWithFormat:@"%.02im:%.02i ago", (int)(interval / 60), (interval % 60) ];
+    } else if ( interval < 60 * 60 * 24 ) {
+        secs_ago.text = [NSString stringWithFormat:@"%.02i:%.02i:%.02i ago", (int)(interval / 3600), (int)((interval % 3600) / 60), (interval % 60) ];
+    } else {
+        secs_ago.text = [NSString stringWithFormat:@"%id %.02i:%.02i:%.02i ago", (int)(interval / (3600 * 24)), (int)((interval % (3600 * 24)) / 3600), (int)((interval % 3600) / 60), (interval % 60) ];
+    }
+
+    
 
     return cell;
 }

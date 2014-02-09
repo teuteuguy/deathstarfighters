@@ -27,10 +27,6 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
-    dispatch_async(shubaccaQueue1, ^{
-        NSData* data = [NSData dataWithContentsOfURL:[NSURL URLWithString:shubaccaGetIDsUrl]];
-        [self performSelectorOnMainThread:@selector(fetchedIDs:) withObject:data waitUntilDone:YES];
-    });
 }
 
 - (void)didReceiveMemoryWarning
@@ -41,6 +37,10 @@
 
 
 - (void)viewWillAppear:(BOOL)animated {
+    dispatch_async(shubaccaQueue1, ^{
+        NSData* data = [NSData dataWithContentsOfURL:[NSURL URLWithString:shubaccaGetIDsUrl]];
+        [self performSelectorOnMainThread:@selector(fetchedIDs:) withObject:data waitUntilDone:YES];
+    });
 //    // 1
 //    CLLocationCoordinate2D zoomLocation;
 //    NSDictionary * dict = [self.itemDetail valueForKey:@"gps"];
@@ -86,10 +86,26 @@
             zoomLocation.latitude = [(NSNumber *)[strings objectAtIndex:0] floatValue];
             zoomLocation.longitude= [(NSNumber *)[strings objectAtIndex:1] floatValue];
             
-            MKPointAnnotation *point = [[MKPointAnnotation alloc] init];
+            MKPointAnnotation * point = [[MKPointAnnotation alloc] init];
             point.coordinate = zoomLocation;
             point.title = [object valueForKey:@"description"];
-            point.subtitle = [object valueForKey:@"last_known_gps_datetime"];
+            
+            NSDateFormatter * formatter = [[NSDateFormatter alloc] init];
+            [formatter setTimeZone:[NSTimeZone timeZoneWithName:@"SGT"]];
+            [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+            int interval = (int)[[NSDate date] timeIntervalSinceDate:[formatter dateFromString: [object valueForKey:@"last_known_gps_datetime"]]];
+            if ( interval < 60 ) {
+                point.subtitle = [NSString stringWithFormat:@"%.02is ago", interval];
+            } else if ( interval < 60 * 60 ) {
+                point.subtitle = [NSString stringWithFormat:@"%.02im:%.02i ago", (int)(interval / 60), (interval % 60) ];
+            } else if ( interval < 60 * 60 * 24 ) {
+                point.subtitle = [NSString stringWithFormat:@"%.02i:%.02i:%.02i ago", (int)(interval / 3600), (int)((interval % 3600) / 60), (interval % 60) ];
+            } else {
+                point.subtitle = [NSString stringWithFormat:@"%id %.02i:%.02i:%.02i ago", (int)(interval / (3600 * 24)), (int)((interval % (3600 * 24)) / 3600), (int)((interval % 3600) / 60), (interval % 60) ];
+            }
+            
+            
+            //point.subtitle = [object valueForKey:@"last_known_gps_datetime"];
             
             [map addAnnotation:point];
             
@@ -100,6 +116,52 @@
     }
 }
 
+
+- (void)mapView:(MKMapView *)mapView didSelectAnnotationView:(MKAnnotationView *)view {
+//    if (view.annotation == self.customAnnotation) {
+//        if (self.calloutAnnotation == nil) {
+//            self.calloutAnnotation = [[CalloutMapAnnotation alloc] initWithLatitude:view.annotation.coordinate.latitude
+//                                                                       andLongitude:view.annotation.coordinate.longitude];
+//        } else {
+//            self.calloutAnnotation.latitude = view.annotation.coordinate.latitude;
+//            self.calloutAnnotation.longitude = view.annotation.coordinate.longitude;
+//        }
+//        [self.mapView addAnnotation:self.calloutAnnotation];
+//        self.selectedAnnotationView = view;
+//    }
+}
+- (void)mapView:(MKMapView *)mapView didDeselectAnnotationView:(MKAnnotationView *)view {
+//    if (self.calloutAnnotation && view.annotation == self.customAnnotation) {
+//        [self.mapView removeAnnotation: self.calloutAnnotation];
+//    }
+}
+
+- (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id<MKAnnotation>)annotation {
+//    if (annotation == self.calloutAnnotation) {
+//        CalloutMapAnnotationView *calloutMapAnnotationView = (CalloutMapAnnotationView *)[self.mapView dequeueReusableAnnotationViewWithIdentifier:@"CalloutAnnotation"];
+//        if (!calloutMapAnnotationView) {
+//            calloutMapAnnotationView = [[[CalloutMapAnnotationView alloc] initWithAnnotation:annotation
+//                                                                             reuseIdentifier:@"CalloutAnnotation"] autorelease];
+//        }
+//        calloutMapAnnotationView.parentAnnotationView = self.selectedAnnotationView;
+//        calloutMapAnnotationView.mapView = self.mapView;
+//        return calloutMapAnnotationView;
+//    } else if (annotation == self.customAnnotation) {
+//        MKPinAnnotationView *annotationView = [[[MKPinAnnotationView alloc] initWithAnnotation:annotation
+//                                                                               reuseIdentifier:@"CustomAnnotation"] autorelease];
+//        annotationView.canShowCallout = NO;
+//        annotationView.pinColor = MKPinAnnotationColorGreen;
+//        return annotationView;
+//    } else if (annotation == self.normalAnnotation) {
+//        MKPinAnnotationView *annotationView = [[[MKPinAnnotationView alloc] initWithAnnotation:annotation
+//                                                                               reuseIdentifier:@"NormalAnnotation"] autorelease];
+//        annotationView.canShowCallout = YES;
+//        annotationView.pinColor = MKPinAnnotationColorPurple;
+//        return annotationView;
+//    }
+    
+    return nil;
+}
 
 
 @end

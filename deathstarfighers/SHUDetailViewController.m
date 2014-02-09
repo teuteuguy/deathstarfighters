@@ -39,26 +39,34 @@
     // 1
     CLLocationCoordinate2D zoomLocation;
     NSDictionary * dict = [self.itemDetail valueForKey:@"gps"];
-    int fix = [(NSNumber *)[dict valueForKey:@"fix"] integerValue];
-    if ( fix > 1 ) {
-        zoomLocation.latitude = [(NSNumber *)[dict valueForKey:@"latitude"] floatValue];
-        zoomLocation.longitude= [(NSNumber *)[dict valueForKey:@"longitude"] floatValue];
+    
+    if ( ! 	[dict isEqual:[NSNull null]] ) {
+    
+        int fix = [(NSNumber *)[dict valueForKey:@"fix"] integerValue];
+        if ( fix > 1 ) {
+            zoomLocation.latitude = [(NSNumber *)[dict valueForKey:@"latitude"] floatValue];
+            zoomLocation.longitude= [(NSNumber *)[dict valueForKey:@"longitude"] floatValue];
         
-        MKPointAnnotation *point = [[MKPointAnnotation alloc] init];
-        point.coordinate = zoomLocation;
-        point.title = [self.itemSHU valueForKey:@"description"];
-        point.subtitle = @"I'm here!!!";
+            MKPointAnnotation *point = [[MKPointAnnotation alloc] init];
+            point.coordinate = zoomLocation;
+            point.title = [self.itemSHU valueForKey:@"description"];
+            point.subtitle = @"I'm here!!!";
         
-
-        // 2
-        MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(zoomLocation, 1.0*METERS_PER_MILE, 1.0*METERS_PER_MILE);
+            // 2
+            MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(zoomLocation, 1.0*METERS_PER_MILE, 1.0*METERS_PER_MILE);
         
-        // 3
-        [map setRegion:viewRegion animated:YES];
-        [map addAnnotation:point];
-        [map selectAnnotation:point animated:NO];
+            // 3
+            [map setRegion:viewRegion animated:YES];
+            [map addAnnotation:point];
+            [map selectAnnotation:point animated:NO];
+        }
     }
+
+    UIColor * backgroundcolor = [UIColor colorWithRed:119/255.0 green:153/255.0 blue:203/255.0 alpha:1];
+    [self.tableView setBackgroundColor:backgroundcolor];
+    [self.tableView setSeparatorColor:backgroundcolor];
 }
+
 
 - (void)setItemDetail:(NSDictionary *)newItemDetail
 {

@@ -10,8 +10,53 @@
 
 @implementation AppDelegate
 
+
+
+- (void)customizeAppearance
+{
+//    // Create resizable images
+//    UIImage *gradientImage44 = [[UIImage imageNamed:@"surf_gradient_textured_44"]
+//                                resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)];
+//    UIImage *gradientImage32 = [[UIImage imageNamed:@"surf_gradient_textured_32"]
+//                                resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)];
+//    
+//    // Set the background image for *all* UINavigationBars
+//    [[UINavigationBar appearance] setBackgroundImage:gradientImage44
+//                                       forBarMetrics:UIBarMetricsDefault];
+//    [[UINavigationBar appearance] setBackgroundImage:gradientImage32
+//                                       forBarMetrics:UIBarMetricsLandscapePhone];
+    
+    UIColor * backgroundcolor = [UIColor colorWithRed:119/255.0 green:153/255.0 blue:203/255.0 alpha:1.0];
+    [[UINavigationBar appearance] setBackgroundColor:backgroundcolor];
+    //[[UINavigationBar appearance] setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
+    //[[UINavigationBar appearance] setTintColor:backgroundcolor];
+    //[[UINavigationBar appearance] setTranslucent:false];
+    // Customize the title text for *all* UINavigationBars
+    [[UINavigationBar appearance] setTitleTextAttributes:
+            [NSDictionary dictionaryWithObjectsAndKeys:
+             [UIColor colorWithRed:255.0/255.0 green:255.0/255.0 blue:255.0/255.0 alpha:1.0],
+             NSForegroundColorAttributeName,
+             [UIFont fontWithName:@"TrebuchetMS" size:0.0],
+             NSFontAttributeName,
+             nil]];
+//    [[UINavigationBar appearance] setTitleTextAttributes:
+//     [NSDictionary dictionaryWithObjectsAndKeys:
+//      [UIColor colorWithRed:255.0/255.0 green:255.0/255.0 blue:255.0/255.0 alpha:1.0],
+//      UITextAttributeTextColor,
+//      [UIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:0.8],
+//      UITextAttributeTextShadowColor,
+//      [NSValue valueWithUIOffset:UIOffsetMake(0, -1)],
+//      UITextAttributeTextShadowOffset,
+//      [UIFont fontWithName:@"Arial-Bold" size:0.0],
+//      UITextAttributeFont,
+//      nil]];
+}
+
+
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    [self customizeAppearance];
     // Override point for customization after application launch.
     return YES;
 }

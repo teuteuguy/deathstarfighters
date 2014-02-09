@@ -142,14 +142,30 @@
     int interval = (int)[now timeIntervalSinceDate:created_at];
 
     cell.textLabel.text = [listItems[indexPath.row] valueForKey:@"id"];
-    if ( interval < 120 ) {
-        cell.detailTextLabel.text = [NSString stringWithFormat:@"%.02i secs ago", interval];
-    } else  {
-        cell.detailTextLabel.text = [NSString stringWithFormat:@"%.02i:%.02i secs ago", (int)(interval / 60), (interval % 60) ];
+//    if ( interval < 120 ) {
+//        cell.detailTextLabel.text = [NSString stringWithFormat:@"%.02i secs ago", interval];
+//    } else  {
+//        cell.detailTextLabel.text = [NSString stringWithFormat:@"%.02i:%.02i secs ago", (int)(interval / 60), (interval % 60) ];
+//    }
+    if ( interval < 60 ) {
+        cell.detailTextLabel.text = [NSString stringWithFormat:@"%.02is ago", interval];
+    } else if ( interval < 60 * 60 ) {
+        cell.detailTextLabel.text = [NSString stringWithFormat:@"%.02im:%.02i ago", (int)(interval / 60), (interval % 60) ];
+    } else if ( interval < 60 * 60 * 24 ) {
+        cell.detailTextLabel.text = [NSString stringWithFormat:@"%.02i:%.02i:%.02i ago", (int)(interval / 3600), (int)((interval % 3600) / 60), (interval % 60) ];
+    } else {
+        cell.detailTextLabel.text = [NSString stringWithFormat:@"%id %.02i:%.02i:%.02i ago", (int)(interval / (3600 * 24)), (int)((interval % (3600 * 24)) / 3600), (int)((interval % 3600) / 60), (interval % 60) ];
     }
     
     return cell;
 }
+
+- (void)viewWillAppear:(BOOL)animated {
+    UIColor * backgroundcolor = [UIColor colorWithRed:119/255.0 green:153/255.0 blue:203/255.0 alpha:1];
+    [self.tableView setBackgroundColor:backgroundcolor];
+    [self.tableView setSeparatorColor:backgroundcolor];
+}
+
 
 /*
 // Override to support conditional editing of the table view.

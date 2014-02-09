@@ -36,6 +36,14 @@
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+    //    UIView * bview = [[UIView alloc] init];
+    //    bview.backgroundColor = [UIColor colorWithRed:119/255.0 green:153/255.0 blue:203/255.0 alpha:1];
+    //    [self.tableView setBackgroundView:bview];
+    UIColor * backgroundcolor = [UIColor colorWithRed:119/255.0 green:153/255.0 blue:203/255.0 alpha:1];
+    [self.tableView setBackgroundColor:backgroundcolor];
+    [self.tableView setSeparatorColor:backgroundcolor];
+}
 
 
 - (void)setItemSHU:(id)newItemSHU

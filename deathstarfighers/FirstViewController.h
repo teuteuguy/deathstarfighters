@@ -10,7 +10,7 @@
 
 #import <MapKit/MapKit.h>
 
-@interface FirstViewController : UIViewController {
+@interface FirstViewController : UIViewController <MKMapViewDelegate> {
     MKMapView   * map;
 }
 
