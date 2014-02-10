@@ -107,11 +107,12 @@
             
             //point.subtitle = [object valueForKey:@"last_known_gps_datetime"];
             
-            [map addAnnotation:point];
+            //[map addAnnotation:point];
             
             [annotations addObject:point];
             
         }
+        [map removeAnnotations:[map annotations]];
         [map showAnnotations:annotations animated:YES];
     }
 }

@@ -8,7 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
-@interface SHUMenuTableViewController : UITableViewController
+@interface SHUMenuTableViewController : UITableViewController {
+    NSMutableArray  * configItems;
+}
+
+@property (nonatomic, retain) NSMutableArray    * configItems;
 
 @property (strong, nonatomic) NSDictionary * itemSHU;
 

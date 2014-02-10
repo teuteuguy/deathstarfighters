@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "-[SHUMenuTableViewController fetchedList:]:SHUMenuTableViewController.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[SHUMenuTableViewController tableView:cellForRowAtIndexPath:]:SHUMenuTableViewController.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[ThirdViewController tableView:cellForRowAtIndexPath:]:ThirdViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "status_secs_ago.text">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[SHUSimpleListViewController tableView:numberOfRowsInSection:]:SHUSimpleListViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.itemList">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[SHUSimpleListViewController tableView:cellForRowAtIndexPath:]:SHUSimpleListViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.itemList">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>

@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		4A76E38518A7191F00434AF4 /* splashscreen.png in Resources */ = {isa = PBXBuildFile; fileRef = 4A76E38318A718DF00434AF4 /* splashscreen.png */; };
+		4AAF840F18A8ABFE003765A4 /* Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AAF840E18A8ABFE003765A4 /* Utils.m */; };
+		4AAF841218A8BE43003765A4 /* SHUSimpleListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AAF841118A8BE43003765A4 /* SHUSimpleListViewController.m */; };
 		4ACE4A0C18A64E170082DDFE /* SHUStatusTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4ACE4A0B18A64E170082DDFE /* SHUStatusTableViewController.m */; };
 		4ACE4A0F18A6543F0082DDFE /* SHUMenuTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4ACE4A0E18A6543F0082DDFE /* SHUMenuTableViewController.m */; };
 		4ACE4A1318A65A090082DDFE /* SHUItemListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4ACE4A1218A65A090082DDFE /* SHUItemListViewController.m */; };
@@ -45,6 +47,10 @@
 
 /* Begin PBXFileReference section */
 		4A76E38318A718DF00434AF4 /* splashscreen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = splashscreen.png; sourceTree = "<group>"; };
+		4AAF840D18A8ABFE003765A4 /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
+		4AAF840E18A8ABFE003765A4 /* Utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Utils.m; sourceTree = "<group>"; };
+		4AAF841018A8BE43003765A4 /* SHUSimpleListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SHUSimpleListViewController.h; sourceTree = "<group>"; };
+		4AAF841118A8BE43003765A4 /* SHUSimpleListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SHUSimpleListViewController.m; sourceTree = "<group>"; };
 		4ACE4A0A18A64E170082DDFE /* SHUStatusTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SHUStatusTableViewController.h; sourceTree = "<group>"; };
 		4ACE4A0B18A64E170082DDFE /* SHUStatusTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SHUStatusTableViewController.m; sourceTree = "<group>"; };
 		4ACE4A0D18A6543F0082DDFE /* SHUMenuTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SHUMenuTableViewController.h; sourceTree = "<group>"; };
@@ -172,6 +178,10 @@
 				4ACE4A1218A65A090082DDFE /* SHUItemListViewController.m */,
 				4ACE4A1418A693D70082DDFE /* SHUDetailViewController.h */,
 				4ACE4A1518A693D70082DDFE /* SHUDetailViewController.m */,
+				4AAF840D18A8ABFE003765A4 /* Utils.h */,
+				4AAF840E18A8ABFE003765A4 /* Utils.m */,
+				4AAF841018A8BE43003765A4 /* SHUSimpleListViewController.h */,
+				4AAF841118A8BE43003765A4 /* SHUSimpleListViewController.m */,
 			);
 			path = deathstarfighers;
 			sourceTree = "<group>";
@@ -308,6 +318,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				4ACE4A1318A65A090082DDFE /* SHUItemListViewController.m in Sources */,
+				4AAF841218A8BE43003765A4 /* SHUSimpleListViewController.m in Sources */,
+				4AAF840F18A8ABFE003765A4 /* Utils.m in Sources */,
 				4AF20F6718A61DF700D2B8E1 /* SecondViewController.m in Sources */,
 				4AF20F8A18A6213200D2B8E1 /* SHUBaccaConnection.m in Sources */,
 				4AF20F8718A6205700D2B8E1 /* ThirdViewController.m in Sources */,
