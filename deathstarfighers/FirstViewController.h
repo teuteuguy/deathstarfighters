@@ -9,8 +9,9 @@
 #import <UIKit/UIKit.h>
 
 #import <MapKit/MapKit.h>
+#import "SHUBaccaConnection.h"
 
-@interface FirstViewController : UIViewController <MKMapViewDelegate> {
+@interface FirstViewController : UIViewController <MKMapViewDelegate, SHUBaccaConnectionDelegates> {
     UIView          * activityView;
     MKMapView       * map;
 }

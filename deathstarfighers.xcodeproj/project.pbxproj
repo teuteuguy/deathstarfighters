@@ -118,8 +118,6 @@
 			children = (
 				4ACE4A0B18A64E170082DDFE /* SHUStatusTableViewController.m */,
 				4ACE4A0A18A64E170082DDFE /* SHUStatusTableViewController.h */,
-				4AF20F8818A6213100D2B8E1 /* SHUBaccaConnection.h */,
-				4AF20F8918A6213100D2B8E1 /* SHUBaccaConnection.m */,
 			);
 			name = old;
 			sourceTree = "<group>";
@@ -164,6 +162,8 @@
 				4AF20F5C18A61DF700D2B8E1 /* AppDelegate.h */,
 				4AF20F5D18A61DF700D2B8E1 /* AppDelegate.m */,
 				4AF20F5F18A61DF700D2B8E1 /* Main.storyboard */,
+				4AF20F8818A6213100D2B8E1 /* SHUBaccaConnection.h */,
+				4AF20F8918A6213100D2B8E1 /* SHUBaccaConnection.m */,
 				4AF20F6218A61DF700D2B8E1 /* FirstViewController.h */,
 				4AF20F6318A61DF700D2B8E1 /* FirstViewController.m */,
 				4AF20F6518A61DF700D2B8E1 /* SecondViewController.h */,

@@ -7,6 +7,7 @@
 //
 
 #import "FirstViewController.h"
+#import "SHUBaccaConnection.h"
 #import "Utils.h"
 
 #define METERS_PER_MILE 1609.344
@@ -41,110 +42,121 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     
-    _routeOverlays = nil;
-    _routeOverlays = [[NSMutableArray alloc] init];
+    [map removeOverlays:[[SHUBaccaConnection sharedSHUBaccaConnection] shuRouteOverlays]];
+    [[SHUBaccaConnection sharedSHUBaccaConnection] setDelegate:self];
+    [[SHUBaccaConnection sharedSHUBaccaConnection] update];
     
-    [map removeOverlays:_routeOverlays];
+    //_routeOverlays = nil;
+    //_routeOverlays = [[NSMutableArray alloc] init];
+    //[map removeOverlays:_routeOverlays];
     
     activityView.hidden = false;
     
-    dispatch_async(shubaccaQueue1, ^{
-        NSData* data = [NSData dataWithContentsOfURL:[NSURL URLWithString:shubaccaGetIDsUrl]];
-        [self performSelectorOnMainThread:@selector(fetchedIDs:) withObject:data waitUntilDone:YES];
-    });
-    
+    //dispatch_async(shubaccaQueue1, ^{
+    //    NSData* data = [NSData dataWithContentsOfURL:[NSURL URLWithString:shubaccaGetIDsUrl]];
+    //    [self performSelectorOnMainThread:@selector(fetchedIDs:) withObject:data waitUntilDone:YES];
+    //});
 }
 
-
-- (void)fetchedIDs:(NSData *)responseData {
-    //parse out the json data
-    NSError * error;
+- (void)doneUpdating {
+    NSLog(@"Awesmoe");
+    [map removeAnnotations:[map annotations]];
+    NSArray * routeOverlays = [[SHUBaccaConnection sharedSHUBaccaConnection] shuRouteOverlays];
+    NSArray * annotations = [[SHUBaccaConnection sharedSHUBaccaConnection] shuMapAnnotations];
+    [map addOverlays:routeOverlays];
+    [map showAnnotations:annotations animated:YES];
     
-    NSArray * shuArray = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableContainers error:&error];
-    
-    if ( error != Nil ) {
-        NSLog( @"Could not make connection with server" );
-    } else {
-        
-        NSMutableArray * annotations = [[NSMutableArray alloc] init];
-        
-        for( NSDictionary * shu in shuArray ) {
-            
-            if ( [[[shu valueForKey:@"virtual"] description] isEqual:@"0"] ) {
-            
-                NSData * data = [NSData dataWithContentsOfURL:[NSURL URLWithString:shubaccaGetStatusesForIDUrl((NSString *)[shu valueForKey:@"id"], @"status")]];
-                NSArray * statusesForShu = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
-                
-                if ( error != Nil ) {
-                    NSLog( @"Could not make connection with server" );
-                } else {
-                    
-                    NSMutableArray * allPointsForCurrentShu = [[NSMutableArray alloc] init];
-                    
-                    for( NSDictionary * statuses in statusesForShu ) {
-                        
-                        if ( ! [[[statuses valueForKey:@"gps"] description] isEqual:[NSNull null]] ) {
-                            if ( ! [[[[statuses valueForKey:@"gps"] valueForKey:@"fix"] description] isEqual:[NSNull null]] ) {
-                                
-                                NSDictionary * tempDictionary = [statuses valueForKey:@"gps"];
-                                
-                                CLLocationCoordinate2D point = CLLocationCoordinate2DMake([[[tempDictionary valueForKey:@"latitude"] description] floatValue], [[[tempDictionary valueForKey:@"longitude"] description] floatValue]);
-                                
-                                MKPointAnnotation * temp = [[MKPointAnnotation alloc] init];
-                                temp.coordinate = point;
-                                
-                                [allPointsForCurrentShu addObject:temp];
-                            }
-                        }
-                    }
-                    
-                    
-                    CLLocationCoordinate2D coordinates[ [allPointsForCurrentShu count] ];
-                    
-                    for ( int i = 0; i < [allPointsForCurrentShu count]; i ++ ) {
-                        coordinates[ i ] = [(MKPointAnnotation *)[allPointsForCurrentShu objectAtIndex:i] coordinate];
-                    }
-                    
-                    MKPolyline * routeLine = [MKPolyline polylineWithCoordinates:coordinates count:[allPointsForCurrentShu count]];
-                    
-                    [_routeOverlays addObject:routeLine];
-                    
-                }
-                
-                CLLocationCoordinate2D zoomLocation;
-                NSString * coords = (NSString *)[shu valueForKey:@"last_known_gps_coordinates"];
-            
-                if ( ! [coords isEqual:[NSNull null]] ) {
-            
-                    NSArray * strings = [coords componentsSeparatedByString:@","];
-                    zoomLocation.latitude = [(NSNumber *)[strings objectAtIndex:0] floatValue];
-                    zoomLocation.longitude= [(NSNumber *)[strings objectAtIndex:1] floatValue];
-            
-                    MKPointAnnotation * point = [[MKPointAnnotation alloc] init];
-                    point.coordinate = zoomLocation;
-                    point.title = [shu valueForKey:@"description"];
-            
-                    point.subtitle = [Utils intervalInSecsAgo:[shu valueForKey:@"last_known_gps_datetime"]];
-                    
-                    [annotations addObject:point];
-                    
-                }
-            }
-            
-        }
-        
-        [map removeAnnotations:[map annotations]];
-        [map addOverlays:_routeOverlays];
-        [map showAnnotations:annotations animated:YES];
-
-    }
     activityView.hidden = true;
-
 }
 
+//- (void)fetchedIDs:(NSData *)responseData {
+//    //parse out the json data
+//    NSError * error;
+//    
+//    NSArray * shuArray = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableContainers error:&error];
+//    
+//    if ( error != Nil ) {
+//        NSLog( @"Could not make connection with server" );
+//    } else {
+//        
+//        NSMutableArray * annotations = [[NSMutableArray alloc] init];
+//        
+//        for( NSDictionary * shu in shuArray ) {
+//            
+//            if ( [[[shu valueForKey:@"virtual"] description] isEqual:@"0"] ) {
+//            
+//                NSData * data = [NSData dataWithContentsOfURL:[NSURL URLWithString:shubaccaGetStatusesForIDUrl((NSString *)[shu valueForKey:@"id"], @"status")]];
+//                NSArray * statusesForShu = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
+//                
+//                if ( error != Nil ) {
+//                    NSLog( @"Could not make connection with server" );
+//                } else {
+//                    
+//                    NSMutableArray * allPointsForCurrentShu = [[NSMutableArray alloc] init];
+//                    
+//                    for( NSDictionary * statuses in statusesForShu ) {
+//                        
+//                        if ( ! [[[statuses valueForKey:@"gps"] description] isEqual:[NSNull null]] ) {
+//                            if ( ! [[[[statuses valueForKey:@"gps"] valueForKey:@"fix"] description] isEqual:[NSNull null]] ) {
+//                                
+//                                NSDictionary * tempDictionary = [statuses valueForKey:@"gps"];
+//                                
+//                                CLLocationCoordinate2D point = CLLocationCoordinate2DMake([[[tempDictionary valueForKey:@"latitude"] description] floatValue], [[[tempDictionary valueForKey:@"longitude"] description] floatValue]);
+//                                
+//                                MKPointAnnotation * temp = [[MKPointAnnotation alloc] init];
+//                                temp.coordinate = point;
+//                                
+//                                [allPointsForCurrentShu addObject:temp];
+//                            }
+//                        }
+//                    }
+//                    
+//                    
+//                    CLLocationCoordinate2D coordinates[ [allPointsForCurrentShu count] ];
+//                    
+//                    for ( int i = 0; i < [allPointsForCurrentShu count]; i ++ ) {
+//                        coordinates[ i ] = [(MKPointAnnotation *)[allPointsForCurrentShu objectAtIndex:i] coordinate];
+//                    }
+//                    
+//                    MKPolyline * routeLine = [MKPolyline polylineWithCoordinates:coordinates count:[allPointsForCurrentShu count]];
+//                    
+//                    [_routeOverlays addObject:routeLine];
+//                    
+//                }
+//                
+//                CLLocationCoordinate2D zoomLocation;
+//                NSString * coords = (NSString *)[shu valueForKey:@"last_known_gps_coordinates"];
+//            
+//                if ( ! [coords isEqual:[NSNull null]] ) {
+//            
+//                    NSArray * strings = [coords componentsSeparatedByString:@","];
+//                    zoomLocation.latitude = [(NSNumber *)[strings objectAtIndex:0] floatValue];
+//                    zoomLocation.longitude= [(NSNumber *)[strings objectAtIndex:1] floatValue];
+//            
+//                    MKPointAnnotation * point = [[MKPointAnnotation alloc] init];
+//                    point.coordinate = zoomLocation;
+//                    point.title = [shu valueForKey:@"description"];
+//            
+//                    point.subtitle = [Utils intervalInSecsAgo:[shu valueForKey:@"last_known_gps_datetime"]];
+//                    
+//                    [annotations addObject:point];
+//                    
+//                }
+//            }
+//            
+//        }
+//        
+//        [map removeAnnotations:[map annotations]];
+//        [map addOverlays:_routeOverlays];
+//        [map showAnnotations:annotations animated:YES];
+//
+//    }
+//    activityView.hidden = true;
+//
+//}
 
-- (MKOverlayRenderer *)mapView:(MKMapView *)mapView rendererForOverlay:(id)overlay
-{
+
+- (MKOverlayRenderer *)mapView:(MKMapView *)mapView rendererForOverlay:(id)overlay {
     MKPolylineRenderer * renderer = [[MKPolylineRenderer alloc] initWithPolyline:overlay];
     renderer.strokeColor = [UIColor redColor];
     renderer.lineWidth = 4.0;

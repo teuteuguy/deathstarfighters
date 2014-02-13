@@ -7,14 +7,23 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <MapKit/MapKit.h>
 
-@interface SHUBaccaConnection : NSObject {
-    NSString        * TAG;
-    NSMutableArray  * shu_status;
-}
+@protocol SHUBaccaConnectionDelegates <NSObject>
 
-@property (nonatomic, retain) NSString          * TAG;
-@property (nonatomic, retain) NSMutableArray    * shu_status;
+- (void)doneUpdating;
+
+@end
+
+@interface SHUBaccaConnection : NSObject
+
+@property (nonatomic, weak) id <SHUBaccaConnectionDelegates> delegate;
+
+@property (nonatomic, retain) NSMutableArray        * shus;
+@property (nonatomic, retain) NSMutableArray        * shuAllMapAnnotations;
+@property (nonatomic, retain) NSMutableArray        * shuMapAnnotations;
+@property (nonatomic, retain) NSMutableArray        * shuStatuses;
+@property (strong, nonatomic) NSMutableArray        * shuRouteOverlays;
 
 + (id)sharedSHUBaccaConnection;
 
