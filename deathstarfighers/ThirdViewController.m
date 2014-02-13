@@ -40,12 +40,6 @@
     
     self.navigationItem.title = @"SHUs";
 
-    dispatch_async(shubaccaQueue1, ^{
-        NSData* data = [NSData dataWithContentsOfURL:[NSURL URLWithString:shubaccaGetIDsUrl]];
-        [self performSelectorOnMainThread:@selector(fetchedIDs:) withObject:data waitUntilDone:YES];
-    });
-    
-
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
  
@@ -65,6 +59,11 @@
     [self.tableView setBackgroundColor:backgroundcolor];
     [self.tableView setSeparatorColor:backgroundcolor];
     [self.navigationController.navigationBar setBackgroundColor:backgroundcolor];
+    
+    dispatch_async(shubaccaQueue1, ^{
+        NSData* data = [NSData dataWithContentsOfURL:[NSURL URLWithString:shubaccaGetIDsUrl]];
+        [self performSelectorOnMainThread:@selector(fetchedIDs:) withObject:data waitUntilDone:YES];
+    });
 }
 
 
@@ -93,6 +92,7 @@
             shus = [[NSMutableArray alloc] init];
         }
         [shus removeAllObjects];
+        [self.tableView reloadData];
 
         for( NSDictionary * object in responseArray ) {
 //
@@ -113,14 +113,13 @@
             
             NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
             [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+            [self.tableView reloadData];
 //
 //            }
 //            
         }
     }
 }
-
-
 
 - (void)didReceiveMemoryWarning
 {
@@ -140,7 +139,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    int nb_of_rows = [shus count];
+    NSInteger nb_of_rows = [shus count];
     //NSLog( @"%i", nb_of_rows );
     return nb_of_rows;
 }

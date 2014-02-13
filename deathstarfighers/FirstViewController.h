@@ -11,9 +11,14 @@
 #import <MapKit/MapKit.h>
 
 @interface FirstViewController : UIViewController <MKMapViewDelegate> {
-    MKMapView   * map;
+    UIView          * activityView;
+    MKMapView       * map;
 }
 
-@property (strong, nonatomic) IBOutlet MKMapView * map;
+@property (strong, nonatomic) IBOutlet  UIView          * activityView;
+@property (strong, nonatomic) IBOutlet  MKMapView       * map;
+
+@property (strong, nonatomic)           NSMutableArray  * routeOverlays;
+@property (strong, nonatomic)           NSMutableArray  * mappoints;
 
 @end

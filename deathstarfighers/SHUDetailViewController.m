@@ -42,7 +42,7 @@
     
     if ( ! 	[dict isEqual:[NSNull null]] ) {
     
-        int fix = [(NSNumber *)[dict valueForKey:@"fix"] integerValue];
+        NSInteger fix = [(NSNumber *)[dict valueForKey:@"fix"] integerValue];
         if ( fix > 1 ) {
             zoomLocation.latitude = [(NSNumber *)[dict valueForKey:@"latitude"] floatValue];
             zoomLocation.longitude= [(NSNumber *)[dict valueForKey:@"longitude"] floatValue];

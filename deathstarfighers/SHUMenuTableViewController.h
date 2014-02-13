@@ -7,12 +7,15 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <MapKit/MapKit.h>
 
 @interface SHUMenuTableViewController : UITableViewController {
-    NSMutableArray  * configItems;
+    NSDictionary  * configItems;
+    NSDictionary * statusItems;
 }
 
-@property (nonatomic, retain) NSMutableArray    * configItems;
+@property (nonatomic, retain) NSDictionary * configItems;
+@property (nonatomic, retain) NSDictionary * statusItems;
 
 @property (strong, nonatomic) NSDictionary * itemSHU;
 

@@ -13,7 +13,9 @@
 #import "Utils.h"
 
 #define shubaccaQueue2 dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0 ) //1
+#define shubaccaQueue3 dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0 ) //1
 #define shubaccaGetConfigForIDUrl(shu) [NSString stringWithFormat:@"http://api.shubacca.com/shu/%@/config?consumer_key=4a8e628392a504eb746c37e1b0044f0f&sort=id,desc&limit=1", shu] //2
+#define shubaccaGetStatusesForIDUrl(shu) [NSString stringWithFormat:@"http://api.shubacca.com/shu/%@/status?consumer_key=4a8e628392a504eb746c37e1b0044f0f&sort=id,desc&limit=1", shu] //2
 
 @interface SHUMenuTableViewController ()
 
@@ -22,6 +24,7 @@
 @implementation SHUMenuTableViewController
 
 @synthesize configItems;
+@synthesize statusItems;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -41,15 +44,10 @@
  
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
-    
-    dispatch_async(shubaccaQueue2, ^{
-        NSData * data = [ NSData dataWithContentsOfURL:[NSURL URLWithString:shubaccaGetConfigForIDUrl( [self.itemSHU valueForKey:@"id"] ) ] ];
-        [self performSelectorOnMainThread:@selector(fetchedList:) withObject:data waitUntilDone:YES];
-    });
 }
 
 
-- (void)fetchedList:(NSData *)responseData {
+- (void)fetchedConfigList:(NSData *)responseData {
     NSError * error;
     NSArray * responseArray = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableContainers error:&error];
     
@@ -57,10 +55,7 @@
         NSLog( @"Could not make connection with server" );
     } else {
         
-        if ( configItems == Nil ) {
-            configItems = [[NSMutableArray alloc] init];
-        }
-        [configItems removeAllObjects];
+        
         
         for( NSDictionary * object in responseArray ) {
         
@@ -80,17 +75,52 @@
 //            
 //            [newDictionary addEntriesFromDictionary:opDictionary];
 //            [configItems addObject:newDictionary];
-            [configItems addObject:object];
+            configItems = [[NSDictionary alloc] initWithDictionary:object];
+            //[configItems addObject:object];
             [self.tableView reloadData];
         }
     }
 }
+
+- (void)fetchedStatusList:(NSData *)responseData {
+    //parse out the json data
+    NSError * error;
+    
+    NSArray * responseArray = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableContainers error:&error];
+    
+    if ( error != Nil ) {
+        NSLog( @"Could not make connection with server" );
+    } else {
+        
+
+        for( NSDictionary * object in responseArray ) {
+            
+            statusItems = [[NSDictionary alloc] initWithDictionary:object];
+            [self.tableView reloadData];
+            
+        }
+    }
+}
+
 
 
 - (void)viewWillAppear:(BOOL)animated {
     UIColor * backgroundcolor = [UIColor colorWithRed:119/255.0 green:153/255.0 blue:203/255.0 alpha:1];
     [self.tableView setBackgroundColor:backgroundcolor];
     [self.tableView setSeparatorColor:backgroundcolor];
+    
+    configItems = nil;
+    statusItems = nil;
+    [self.tableView reloadData];
+    
+    dispatch_async(shubaccaQueue2, ^{
+        NSData * data = [ NSData dataWithContentsOfURL:[NSURL URLWithString:shubaccaGetConfigForIDUrl( [self.itemSHU valueForKey:@"id"] ) ] ];
+        [self performSelectorOnMainThread:@selector(fetchedConfigList:) withObject:data waitUntilDone:YES];
+    });
+    dispatch_async(shubaccaQueue3, ^{
+        NSData * data = [ NSData dataWithContentsOfURL:[NSURL URLWithString:shubaccaGetStatusesForIDUrl( [self.itemSHU valueForKey:@"id"] ) ] ];
+        [self performSelectorOnMainThread:@selector(fetchedStatusList:) withObject:data waitUntilDone:YES];
+    });
 }
 
 
@@ -126,48 +156,200 @@
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     // Return the number of sections.
-    return 2;
+    // 1st is detail view (with map)
+    // 2nd is the menu to go to all status fields
+    // 3rd is the config
+    return 3;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    if ( section == 0 ) return 1;
-    else                return [configItems[0] count];
+//    if ( section <= 1 ) return 1;
+//    else                return [configItems[0] count];
+    switch (section) {
+        case 0:
+            if ( statusItems != nil ) {
+                return 1 + [statusItems count];
+            } else {
+                return 0;
+            }
+            break;
+        case 1:
+            return 1;
+            break;
+        case 2:
+            return [configItems count];
+            break;
+        default:
+            return 0;
+            break;
+    }
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    switch (indexPath.section) {
+        case 0:
+            if ( indexPath.row == 0 ) {
+                return 220;
+            } else {
+                return 30;
+            }
+            break;
+        case 1:
+            return 30;
+            break;
+        case 2:
+            return 30;
+            break;
+        default:
+            break;
+    }
+    return 0;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+    switch (section) {
+        case 0:
+            return @"Last Status";
+            break;
+        case 1:
+            return @"All Status";
+            break;
+        case 2:
+            return @"Config";
+            break;
+        default:
+            return @"WTF";
+            break;
+    }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell;
+    NSString *CellIdentifier;
     
-    if ( indexPath.section == 0 ) {
-        NSString *CellIdentifier = @"MenuCell";
-        cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
-        cell.textLabel.text = @"Status";
-        cell.detailTextLabel.text = [Utils intervalInSecsAgo:[self.itemSHU valueForKey:@"last_known_status_datetime"]];
-    } else {
-        NSArray * allkeys = [[configItems objectAtIndex:0] allKeys];
-        NSArray * allvalues = [[configItems objectAtIndex:0] allValues];
-        NSString * title = [[allkeys objectAtIndex:indexPath.row] description];
-        if ( [title isEqual:[NSNull null]] ) title = @"";
-        
-        
-        if ( [[allvalues objectAtIndex:indexPath.row] isKindOfClass:[NSArray class]] ) {
-            NSString *CellIdentifier = @"ToSimpleListCell";
+    switch (indexPath.section) {
+        case 0:
+            if ( indexPath.row == 0 ) {
+                CellIdentifier = @"MapCell";
+                cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+                //NSLog(@"%f", cell.frame.size.height);
+                
+                // 1
+                CLLocationCoordinate2D zoomLocation;
+                NSString * latlong = [self.itemSHU valueForKey:@"last_known_gps_coordinates"];
+                if ( ! [latlong isEqual:[NSNull null]] ) {
+                    NSArray * temp = [latlong componentsSeparatedByString:@","];
+                    zoomLocation.latitude = [temp[0] floatValue];
+                    zoomLocation.longitude = [temp[1] floatValue];
+                    
+                    MKPointAnnotation *point = [[MKPointAnnotation alloc] init];
+                    point.coordinate = zoomLocation;
+                    point.title = [self.itemSHU valueForKey:@"description"];
+                    point.subtitle = [Utils intervalInSecsAgo:[self.itemSHU valueForKey:@"last_known_gps_datetime"]];
+                    
+                    // 2
+                    #define METERS_PER_MILE 1609.344
+                    MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(zoomLocation, 1.0*METERS_PER_MILE, 1.0*METERS_PER_MILE);
+                    
+                    // 3
+                    CGRect frame = CGRectMake(cell.frame.origin.x, 0, cell.frame.size.width, 220);
+                    MKMapView * map = [[MKMapView alloc] initWithFrame:frame];
+                    [map setRegion:viewRegion animated:YES];
+                    [map addAnnotation:point];
+                    [map selectAnnotation:point animated:NO];
+                    [cell addSubview:map];
+                }
+            } else {
+                NSArray * allkeys = [statusItems allKeys];
+                NSArray * allvalues = [statusItems allValues];
+                NSString * title = [[allkeys objectAtIndex:indexPath.row-1] description];
+                if ( [title isEqual:[NSNull null]] ) title = @"";
+                if ( [[allvalues objectAtIndex:indexPath.row-1] isKindOfClass:[NSArray class]] ) {
+                    CellIdentifier = @"ToSimpleListCell";
+                    cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+                    cell.textLabel.text = title;
+                    cell.detailTextLabel.text = @"";
+                } else {
+                    CellIdentifier = @"InfoCell";
+                    cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+                    NSString * value = [[allvalues objectAtIndex:indexPath.row-1] description];
+                    cell.textLabel.text = title;
+                    if ( ! [value isEqual:[NSNull null]] ) cell.detailTextLabel.text = value;
+                    else cell.detailTextLabel.text = @"";
+                }
+            }
+            break;
+        case 1:
+            CellIdentifier = @"MenuCell";
             cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
-
-            cell.textLabel.text = title;
-            cell.detailTextLabel.text = @"";
-        } else {
-            NSString *CellIdentifier = @"ConfigCell";
-            cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
-            NSString * value = [[allvalues objectAtIndex:indexPath.row] description];
+            cell.textLabel.text = @"Status";
+            cell.detailTextLabel.text = [Utils intervalInSecsAgo:[self.itemSHU valueForKey:@"last_known_status_datetime"]];
+            break;
+        case 2:
+        {
+            NSArray * allkeys = [configItems allKeys];
+            NSArray * allvalues = [configItems allValues];
+            NSString * title = [[allkeys objectAtIndex:indexPath.row] description];
+            if ( [title isEqual:[NSNull null]] ) title = @"";
             
-            cell.textLabel.text = title;
-            if ( ! [value isEqual:[NSNull null]] ) cell.detailTextLabel.text = value;
-            else cell.detailTextLabel.text = @"";
+            
+            if ( [[allvalues objectAtIndex:indexPath.row] isKindOfClass:[NSArray class]] ) {
+                NSString *CellIdentifier = @"ToSimpleListCell";
+                cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+                
+                cell.textLabel.text = title;
+                cell.detailTextLabel.text = @"";
+            } else {
+                NSString *CellIdentifier = @"InfoCell";
+                cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+                NSString * value = [[allvalues objectAtIndex:indexPath.row] description];
+                
+                cell.textLabel.text = title;
+                if ( ! [value isEqual:[NSNull null]] ) cell.detailTextLabel.text = value;
+                else cell.detailTextLabel.text = @"";
+            }
         }
+            break;
+        default:
+            break;
     }
+    
+//    if ( indexPath.section == 0 ) {
+//        NSString *CellIdentifier = @"MenuCell";
+//        cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+//        cell.textLabel.text = @"Status";
+//        cell.detailTextLabel.text = [Utils intervalInSecsAgo:[self.itemSHU valueForKey:@"last_known_status_datetime"]];
+//    } else if ( indexPath.section == 1 ) {
+//        NSString *CellIdentifier = @"MenuCell";
+//        cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+//        cell.textLabel.text = @"Status";
+//        cell.detailTextLabel.text = [Utils intervalInSecsAgo:[self.itemSHU valueForKey:@"last_known_status_datetime"]];
+//    } else {
+//        NSArray * allkeys = [[configItems objectAtIndex:0] allKeys];
+//        NSArray * allvalues = [[configItems objectAtIndex:0] allValues];
+//        NSString * title = [[allkeys objectAtIndex:indexPath.row] description];
+//        if ( [title isEqual:[NSNull null]] ) title = @"";
+//        
+//        
+//        if ( [[allvalues objectAtIndex:indexPath.row] isKindOfClass:[NSArray class]] ) {
+//            NSString *CellIdentifier = @"ToSimpleListCell";
+//            cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+//
+//            cell.textLabel.text = title;
+//            cell.detailTextLabel.text = @"";
+//        } else {
+//            NSString *CellIdentifier = @"ConfigCell";
+//            cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+//            NSString * value = [[allvalues objectAtIndex:indexPath.row] description];
+//            
+//            cell.textLabel.text = title;
+//            if ( ! [value isEqual:[NSNull null]] ) cell.detailTextLabel.text = value;
+//            else cell.detailTextLabel.text = @"";
+//        }
+//    }
     
     // Configure the cell...
     
@@ -216,6 +398,7 @@
 
 #pragma mark - Navigation
 
+
 // In a story board-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
@@ -236,7 +419,7 @@
         
         NSMutableDictionary * newDictionary = [[NSMutableDictionary alloc] init];
 
-        for ( NSDictionary * object in [[configItems objectAtIndex:0] valueForKey:[[(UITableViewCell *)sender textLabel] text]] ) {
+        for ( NSDictionary * object in [configItems valueForKey:[[(UITableViewCell *)sender textLabel] text]] ) {
             NSDictionary * temp;
             if ( [[[[(UITableViewCell *)sender textLabel] text] description] isEqualToString:@"operators"] ) {
                 temp = [NSDictionary dictionaryWithObject:[object valueForKey:@"ezlink_pin"] forKey:[object valueForKey:@"ezlink_can"]];

@@ -7,13 +7,14 @@
 //
 
 #import "FirstViewController.h"
+#import "Utils.h"
 
 #define METERS_PER_MILE 1609.344
 
 
 #define shubaccaQueue1 dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0 ) //1
 #define shubaccaGetIDsUrl @"http://api.shubacca.com/shu?consumer_key=4a8e628392a504eb746c37e1b0044f0f&sort=id,desc" //2
-#define shubaccaGetStatusesForIDUrl(shu,type) [NSString stringWithFormat:@"http://api.shubacca.com/shu/%@/%@?consumer_key=4a8e628392a504eb746c37e1b0044f0f&sort=id,desc&limit=1", shu, [type lowercaseString]] //2
+#define shubaccaGetStatusesForIDUrl(shu,type) [NSString stringWithFormat:@"http://api.shubacca.com/shu/%@/%@?consumer_key=4a8e628392a504eb746c37e1b0044f0f&sort=id,desc&limit=10", shu, [type lowercaseString]] //2
 
 @interface FirstViewController ()
 
@@ -21,7 +22,9 @@
 
 @implementation FirstViewController
 
+@synthesize activityView;
 @synthesize map;
+@synthesize mappoints;
 
 - (void)viewDidLoad
 {
@@ -37,32 +40,19 @@
 
 
 - (void)viewWillAppear:(BOOL)animated {
+    
+    _routeOverlays = nil;
+    _routeOverlays = [[NSMutableArray alloc] init];
+    
+    [map removeOverlays:_routeOverlays];
+    
+    activityView.hidden = false;
+    
     dispatch_async(shubaccaQueue1, ^{
         NSData* data = [NSData dataWithContentsOfURL:[NSURL URLWithString:shubaccaGetIDsUrl]];
         [self performSelectorOnMainThread:@selector(fetchedIDs:) withObject:data waitUntilDone:YES];
     });
-//    // 1
-//    CLLocationCoordinate2D zoomLocation;
-//    NSDictionary * dict = [self.itemDetail valueForKey:@"gps"];
-//    int fix = [(NSNumber *)[dict valueForKey:@"fix"] integerValue];
-//    if ( fix > 1 ) {
-//        zoomLocation.latitude = [(NSNumber *)[dict valueForKey:@"latitude"] floatValue];
-//        zoomLocation.longitude= [(NSNumber *)[dict valueForKey:@"longitude"] floatValue];
-//        
-//        MKPointAnnotation *point = [[MKPointAnnotation alloc] init];
-//        point.coordinate = zoomLocation;
-//        point.title = [self.itemSHU valueForKey:@"description"];
-//        point.subtitle = @"I'm here!!!";
-//        
-//        
-//        // 2
-//        MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(zoomLocation, 1.0*METERS_PER_MILE, 1.0*METERS_PER_MILE);
-//        
-//        // 3
-//        [map setRegion:viewRegion animated:YES];
-//        [map addAnnotation:point];
-//        [map selectAnnotation:point animated:NO];
-//    }
+    
 }
 
 
@@ -70,7 +60,7 @@
     //parse out the json data
     NSError * error;
     
-    NSArray * responseArray = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableContainers error:&error];
+    NSArray * shuArray = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableContainers error:&error];
     
     if ( error != Nil ) {
         NSLog( @"Could not make connection with server" );
@@ -78,43 +68,87 @@
         
         NSMutableArray * annotations = [[NSMutableArray alloc] init];
         
-        for( NSDictionary * object in responseArray ) {
+        for( NSDictionary * shu in shuArray ) {
             
-            CLLocationCoordinate2D zoomLocation;
-            NSString * coords = (NSString *)[object valueForKey:@"last_known_gps_coordinates"];
-            NSArray * strings = [coords componentsSeparatedByString:@","];
-            zoomLocation.latitude = [(NSNumber *)[strings objectAtIndex:0] floatValue];
-            zoomLocation.longitude= [(NSNumber *)[strings objectAtIndex:1] floatValue];
+            if ( [[[shu valueForKey:@"virtual"] description] isEqual:@"0"] ) {
             
-            MKPointAnnotation * point = [[MKPointAnnotation alloc] init];
-            point.coordinate = zoomLocation;
-            point.title = [object valueForKey:@"description"];
+                NSData * data = [NSData dataWithContentsOfURL:[NSURL URLWithString:shubaccaGetStatusesForIDUrl((NSString *)[shu valueForKey:@"id"], @"status")]];
+                NSArray * statusesForShu = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
+                
+                if ( error != Nil ) {
+                    NSLog( @"Could not make connection with server" );
+                } else {
+                    
+                    NSMutableArray * allPointsForCurrentShu = [[NSMutableArray alloc] init];
+                    
+                    for( NSDictionary * statuses in statusesForShu ) {
+                        
+                        if ( ! [[[statuses valueForKey:@"gps"] description] isEqual:[NSNull null]] ) {
+                            if ( ! [[[[statuses valueForKey:@"gps"] valueForKey:@"fix"] description] isEqual:[NSNull null]] ) {
+                                
+                                NSDictionary * tempDictionary = [statuses valueForKey:@"gps"];
+                                
+                                CLLocationCoordinate2D point = CLLocationCoordinate2DMake([[[tempDictionary valueForKey:@"latitude"] description] floatValue], [[[tempDictionary valueForKey:@"longitude"] description] floatValue]);
+                                
+                                MKPointAnnotation * temp = [[MKPointAnnotation alloc] init];
+                                temp.coordinate = point;
+                                
+                                [allPointsForCurrentShu addObject:temp];
+                            }
+                        }
+                    }
+                    
+                    
+                    CLLocationCoordinate2D coordinates[ [allPointsForCurrentShu count] ];
+                    
+                    for ( int i = 0; i < [allPointsForCurrentShu count]; i ++ ) {
+                        coordinates[ i ] = [(MKPointAnnotation *)[allPointsForCurrentShu objectAtIndex:i] coordinate];
+                    }
+                    
+                    MKPolyline * routeLine = [MKPolyline polylineWithCoordinates:coordinates count:[allPointsForCurrentShu count]];
+                    
+                    [_routeOverlays addObject:routeLine];
+                    
+                }
+                
+                CLLocationCoordinate2D zoomLocation;
+                NSString * coords = (NSString *)[shu valueForKey:@"last_known_gps_coordinates"];
             
-            NSDateFormatter * formatter = [[NSDateFormatter alloc] init];
-            [formatter setTimeZone:[NSTimeZone timeZoneWithName:@"SGT"]];
-            [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-            int interval = (int)[[NSDate date] timeIntervalSinceDate:[formatter dateFromString: [object valueForKey:@"last_known_gps_datetime"]]];
-            if ( interval < 60 ) {
-                point.subtitle = [NSString stringWithFormat:@"%.02is ago", interval];
-            } else if ( interval < 60 * 60 ) {
-                point.subtitle = [NSString stringWithFormat:@"%.02im:%.02i ago", (int)(interval / 60), (interval % 60) ];
-            } else if ( interval < 60 * 60 * 24 ) {
-                point.subtitle = [NSString stringWithFormat:@"%.02i:%.02i:%.02i ago", (int)(interval / 3600), (int)((interval % 3600) / 60), (interval % 60) ];
-            } else {
-                point.subtitle = [NSString stringWithFormat:@"%id %.02i:%.02i:%.02i ago", (int)(interval / (3600 * 24)), (int)((interval % (3600 * 24)) / 3600), (int)((interval % 3600) / 60), (interval % 60) ];
+                if ( ! [coords isEqual:[NSNull null]] ) {
+            
+                    NSArray * strings = [coords componentsSeparatedByString:@","];
+                    zoomLocation.latitude = [(NSNumber *)[strings objectAtIndex:0] floatValue];
+                    zoomLocation.longitude= [(NSNumber *)[strings objectAtIndex:1] floatValue];
+            
+                    MKPointAnnotation * point = [[MKPointAnnotation alloc] init];
+                    point.coordinate = zoomLocation;
+                    point.title = [shu valueForKey:@"description"];
+            
+                    point.subtitle = [Utils intervalInSecsAgo:[shu valueForKey:@"last_known_gps_datetime"]];
+                    
+                    [annotations addObject:point];
+                    
+                }
             }
             
-            
-            //point.subtitle = [object valueForKey:@"last_known_gps_datetime"];
-            
-            //[map addAnnotation:point];
-            
-            [annotations addObject:point];
-            
         }
+        
         [map removeAnnotations:[map annotations]];
+        [map addOverlays:_routeOverlays];
         [map showAnnotations:annotations animated:YES];
+
     }
+    activityView.hidden = true;
+
+}
+
+
+- (MKOverlayRenderer *)mapView:(MKMapView *)mapView rendererForOverlay:(id)overlay
+{
+    MKPolylineRenderer * renderer = [[MKPolylineRenderer alloc] initWithPolyline:overlay];
+    renderer.strokeColor = [UIColor redColor];
+    renderer.lineWidth = 4.0;
+    return  renderer;
 }
 
 

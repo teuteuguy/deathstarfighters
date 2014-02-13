@@ -9,6 +9,7 @@
 #import "SHUItemListViewController.h"
 
 #import "SHUDetailViewController.h"
+#import "Utils.h"
 
 #define shubaccaQueue2 dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0 ) //1
 #define shubaccaGetStatusesForIDUrl(shu,type) [NSString stringWithFormat:@"http://api.shubacca.com/shu/%@/%@?consumer_key=4a8e628392a504eb746c37e1b0044f0f&sort=id,desc", shu, [type lowercaseString]] //2
@@ -134,12 +135,12 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     
     // Configure the cell...
-    NSDateFormatter * formatter = [[NSDateFormatter alloc] init];
-    [formatter setTimeZone:[NSTimeZone timeZoneWithName:@"SGT"]];
-    [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-    NSDate * created_at = [formatter dateFromString: [listItems[indexPath.row] valueForKey:@"created_at"]];
-    NSDate * now = [NSDate date];
-    int interval = (int)[now timeIntervalSinceDate:created_at];
+//    NSDateFormatter * formatter = [[NSDateFormatter alloc] init];
+//    [formatter setTimeZone:[NSTimeZone timeZoneWithName:@"SGT"]];
+//    [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+//    NSDate * created_at = [formatter dateFromString: [listItems[indexPath.row] valueForKey:@"created_at"]];
+//    NSDate * now = [NSDate date];
+//    int interval = (int)[now timeIntervalSinceDate:created_at];
 
     cell.textLabel.text = [listItems[indexPath.row] valueForKey:@"id"];
 //    if ( interval < 120 ) {
@@ -147,15 +148,17 @@
 //    } else  {
 //        cell.detailTextLabel.text = [NSString stringWithFormat:@"%.02i:%.02i secs ago", (int)(interval / 60), (interval % 60) ];
 //    }
-    if ( interval < 60 ) {
-        cell.detailTextLabel.text = [NSString stringWithFormat:@"%.02is ago", interval];
-    } else if ( interval < 60 * 60 ) {
-        cell.detailTextLabel.text = [NSString stringWithFormat:@"%.02im:%.02i ago", (int)(interval / 60), (interval % 60) ];
-    } else if ( interval < 60 * 60 * 24 ) {
-        cell.detailTextLabel.text = [NSString stringWithFormat:@"%.02i:%.02i:%.02i ago", (int)(interval / 3600), (int)((interval % 3600) / 60), (interval % 60) ];
-    } else {
-        cell.detailTextLabel.text = [NSString stringWithFormat:@"%id %.02i:%.02i:%.02i ago", (int)(interval / (3600 * 24)), (int)((interval % (3600 * 24)) / 3600), (int)((interval % 3600) / 60), (interval % 60) ];
-    }
+//    if ( interval < 60 ) {
+//        cell.detailTextLabel.text = [NSString stringWithFormat:@"%.02is ago", interval];
+//    } else if ( interval < 60 * 60 ) {
+//        cell.detailTextLabel.text = [NSString stringWithFormat:@"%.02im:%.02i ago", (int)(interval / 60), (interval % 60) ];
+//    } else if ( interval < 60 * 60 * 24 ) {
+//        cell.detailTextLabel.text = [NSString stringWithFormat:@"%.02i:%.02i:%.02i ago", (int)(interval / 3600), (int)((interval % 3600) / 60), (interval % 60) ];
+//    } else {
+//        cell.detailTextLabel.text = [NSString stringWithFormat:@"%id %.02i:%.02i:%.02i ago", (int)(interval / (3600 * 24)), (int)((interval % (3600 * 24)) / 3600), (int)((interval % 3600) / 60), (interval % 60) ];
+//    }
+    
+    cell.detailTextLabel.text = [Utils intervalInSecsAgo:[listItems[indexPath.row] valueForKey:@"created_at"]];
     
     return cell;
 }

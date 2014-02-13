@@ -14,11 +14,16 @@
     
     NSDateFormatter * formatter = [[NSDateFormatter alloc] init];
     [formatter setTimeZone:[NSTimeZone timeZoneWithName:@"SGT"]];
+    [formatter setTimeZone:[NSTimeZone timeZoneWithName:@"UTC"]];
     [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
     
     if ( ! [stringDate isEqual:[NSNull null]] ) {
-        int interval = (int)[[NSDate date] timeIntervalSinceDate:[formatter dateFromString: stringDate]];
+        NSDate * now = [NSDate date];
+        //NSLog([stringDate description]);
+        NSDate * then = [formatter dateFromString: stringDate];
         
+        int interval = (int)[now timeIntervalSinceDate:then];
+
         if ( interval < 60 ) {
             return [NSString stringWithFormat:@"%.02is ago", interval];
         } else if ( interval < 60 * 60 ) {

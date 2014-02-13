@@ -140,7 +140,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    int nb_of_rows = [statuses count];
+    NSInteger nb_of_rows = [statuses count];
     return nb_of_rows;
 }
 
@@ -153,7 +153,7 @@
     //    if (cell == nil) {
     //        cell = [[UITableViewCell alloc] init];
     //    }
-    NSLog( @"%i", [indexPath row] );
+    //NSLog( @"%i", [indexPath row] );
     //    _objects[indexPath.row]
     cell.textLabel.text = [shus[indexPath.row] valueForKey:@"id"];//[[[shubaccaConnection shu_status] objectAtIndex:[indexPath row]] valueForKey:@"id"];
     
