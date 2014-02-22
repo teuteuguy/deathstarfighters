@@ -12,17 +12,20 @@
 #import "SHUSimpleListViewController.h"
 #import "Utils.h"
 
-#define shubaccaQueue2 dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0 ) //1
-#define shubaccaQueue3 dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0 ) //1
-#define shubaccaGetConfigForIDUrl(shu) [NSString stringWithFormat:@"http://api.shubacca.com/shu/%@/config?consumer_key=4a8e628392a504eb746c37e1b0044f0f&sort=id,desc&limit=1", shu] //2
-#define shubaccaGetStatusesForIDUrl(shu) [NSString stringWithFormat:@"http://api.shubacca.com/shu/%@/status?consumer_key=4a8e628392a504eb746c37e1b0044f0f&sort=id,desc&limit=1", shu] //2
+//#define shubaccaQueue2 dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0 ) //1
+////#define shubaccaQueue3 dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0 ) //1
+//#define shubaccaGetConfigForIDUrl(shu) [NSString stringWithFormat:@"http://api.shubacca.com/shu/%@/config?consumer_key=4a8e628392a504eb746c37e1b0044f0f&sort=id,desc&limit=1", shu] //2
+////#define shubaccaGetStatusesForIDUrl(shu) [NSString stringWithFormat:@"http://api.shubacca.com/shu/%@/status?consumer_key=4a8e628392a504eb746c37e1b0044f0f&sort=id,desc&limit=1", shu] //2
 
 @interface SHUMenuTableViewController ()
 
 @end
 
-@implementation SHUMenuTableViewController
+@implementation SHUMenuTableViewController {
+    int shuIndex;
+}
 
+@synthesize itemSHU;
 @synthesize configItems;
 @synthesize statusItems;
 
@@ -47,60 +50,60 @@
 }
 
 
-- (void)fetchedConfigList:(NSData *)responseData {
-    NSError * error;
-    NSArray * responseArray = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableContainers error:&error];
-    
-    if ( error != Nil ) {
-        NSLog( @"Could not make connection with server" );
-    } else {
-        
-        
-        
-        for( NSDictionary * object in responseArray ) {
-        
-//            NSMutableDictionary * newDictionary = [[NSMutableDictionary alloc] init];
-//            NSMutableDictionary * opDictionary = [[NSMutableDictionary alloc] init];
-//            
-//            for( NSString * key in [object allKeys] ) {
-//                if ( [key isEqualToString:@"operators"] ) {
-//                    for ( NSDictionary * operator in [object objectForKey:key] ) {
-//                        [opDictionary addEntriesFromDictionary:[NSDictionary dictionaryWithObjectsAndKeys:[operator objectForKey:@"ezlink_pin"], [operator objectForKey:@"ezlink_can"], nil]];
-//                    }
-//                } else {
-//                    [newDictionary addEntriesFromDictionary:[NSDictionary dictionaryWithObjectsAndKeys:[[object objectForKey:key] description], key, nil]];
-//                }
-//                
-//            }
-//            
-//            [newDictionary addEntriesFromDictionary:opDictionary];
-//            [configItems addObject:newDictionary];
-            configItems = [[NSDictionary alloc] initWithDictionary:object];
-            //[configItems addObject:object];
-            [self.tableView reloadData];
-        }
-    }
-}
+//- (void)fetchedConfigList:(NSData *)responseData {
+//    NSError * error;
+//    NSArray * responseArray = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableContainers error:&error];
+//    
+//    if ( error != Nil ) {
+//        NSLog( @"Could not make connection with server" );
+//    } else {
+//        
+//        
+//        
+//        for( NSDictionary * object in responseArray ) {
+//        
+////            NSMutableDictionary * newDictionary = [[NSMutableDictionary alloc] init];
+////            NSMutableDictionary * opDictionary = [[NSMutableDictionary alloc] init];
+////            
+////            for( NSString * key in [object allKeys] ) {
+////                if ( [key isEqualToString:@"operators"] ) {
+////                    for ( NSDictionary * operator in [object objectForKey:key] ) {
+////                        [opDictionary addEntriesFromDictionary:[NSDictionary dictionaryWithObjectsAndKeys:[operator objectForKey:@"ezlink_pin"], [operator objectForKey:@"ezlink_can"], nil]];
+////                    }
+////                } else {
+////                    [newDictionary addEntriesFromDictionary:[NSDictionary dictionaryWithObjectsAndKeys:[[object objectForKey:key] description], key, nil]];
+////                }
+////                
+////            }
+////            
+////            [newDictionary addEntriesFromDictionary:opDictionary];
+////            [configItems addObject:newDictionary];
+//            configItems = [[NSDictionary alloc] initWithDictionary:object];
+//            //[configItems addObject:object];
+//            [self.tableView reloadData];
+//        }
+//    }
+//}
 
-- (void)fetchedStatusList:(NSData *)responseData {
-    //parse out the json data
-    NSError * error;
-    
-    NSArray * responseArray = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableContainers error:&error];
-    
-    if ( error != Nil ) {
-        NSLog( @"Could not make connection with server" );
-    } else {
-        
-
-        for( NSDictionary * object in responseArray ) {
-            
-            statusItems = [[NSDictionary alloc] initWithDictionary:object];
-            [self.tableView reloadData];
-            
-        }
-    }
-}
+//- (void)fetchedStatusList:(NSData *)responseData {
+//    //parse out the json data
+//    NSError * error;
+//    
+//    NSArray * responseArray = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableContainers error:&error];
+//    
+//    if ( error != Nil ) {
+//        NSLog( @"Could not make connection with server" );
+//    } else {
+//        
+//
+//        for( NSDictionary * object in responseArray ) {
+//            
+//            statusItems = [[NSDictionary alloc] initWithDictionary:object];
+//            [self.tableView reloadData];
+//            
+//        }
+//    }
+//}
 
 
 
@@ -109,25 +112,46 @@
     [self.tableView setBackgroundColor:backgroundcolor];
     [self.tableView setSeparatorColor:backgroundcolor];
     
-    configItems = nil;
-    statusItems = nil;
-    [self.tableView reloadData];
+    //configItems = nil;
+    //statusItems = nil;
+    //[self.tableView reloadData];
     
-    dispatch_async(shubaccaQueue2, ^{
-        NSData * data = [ NSData dataWithContentsOfURL:[NSURL URLWithString:shubaccaGetConfigForIDUrl( [self.itemSHU valueForKey:@"id"] ) ] ];
-        [self performSelectorOnMainThread:@selector(fetchedConfigList:) withObject:data waitUntilDone:YES];
-    });
-    dispatch_async(shubaccaQueue3, ^{
-        NSData * data = [ NSData dataWithContentsOfURL:[NSURL URLWithString:shubaccaGetStatusesForIDUrl( [self.itemSHU valueForKey:@"id"] ) ] ];
-        [self performSelectorOnMainThread:@selector(fetchedStatusList:) withObject:data waitUntilDone:YES];
-    });
+    [[SHUBaccaConnection sharedSHUBaccaConnection] setDelegate:self];
+    
+//    dispatch_async(shubaccaQueue2, ^{
+//        NSData * data = [ NSData dataWithContentsOfURL:[NSURL URLWithString:shubaccaGetConfigForIDUrl( [self.itemSHU valueForKey:@"id"] ) ] ];
+//        [self performSelectorOnMainThread:@selector(fetchedConfigList:) withObject:data waitUntilDone:YES];
+//    });
+//    dispatch_async(shubaccaQueue3, ^{
+//        NSData * data = [ NSData dataWithContentsOfURL:[NSURL URLWithString:shubaccaGetStatusesForIDUrl( [self.itemSHU valueForKey:@"id"] ) ] ];
+//        [self performSelectorOnMainThread:@selector(fetchedStatusList:) withObject:data waitUntilDone:YES];
+//    });
 }
 
 
+- (void)updating {
+    [self.tableView reloadData];
+}
+- (void)doneUpdating {
+    [self.tableView reloadData];
+}
+
+- (void)setConfigItems:(NSDictionary *)newConfigItems
+{
+    if (configItems != newConfigItems) {
+        configItems = newConfigItems;
+    }
+}
+- (void)setStatusItems:(NSArray *)newStatusItems
+{
+    if (statusItems != newStatusItems) {
+        statusItems = newStatusItems;
+    }
+}
 - (void)setItemSHU:(id)newItemSHU
 {
-    if (_itemSHU != newItemSHU) {
-        _itemSHU = newItemSHU;
+    if (itemSHU != newItemSHU) {
+        itemSHU = newItemSHU;
 
         // Update the view.
         [self configureView];
@@ -169,8 +193,10 @@
 //    else                return [configItems[0] count];
     switch (section) {
         case 0:
+//            if ( [[SHUBaccaConnection sharedSHUBaccaConnection] shuStatuses][itemIndex.integerValue] != nil ) {
+//                return 1 + [[[[SHUBaccaConnection sharedSHUBaccaConnection] shuStatuses] objectAtIndex:itemIndex.integerValue] count];
             if ( statusItems != nil ) {
-                return 1 + [statusItems count];
+                return 1 + [[statusItems objectAtIndex:0] count];
             } else {
                 return 0;
             }
@@ -180,6 +206,7 @@
             break;
         case 2:
             return [configItems count];
+            return 0;
             break;
         default:
             return 0;
@@ -263,8 +290,8 @@
                     [cell addSubview:map];
                 }
             } else {
-                NSArray * allkeys = [statusItems allKeys];
-                NSArray * allvalues = [statusItems allValues];
+                NSArray * allkeys = [[statusItems objectAtIndex:0] allKeys];
+                NSArray * allvalues = [[statusItems objectAtIndex:0] allValues];
                 NSString * title = [[allkeys objectAtIndex:indexPath.row-1] description];
                 if ( [title isEqual:[NSNull null]] ) title = @"";
                 if ( [[allvalues objectAtIndex:indexPath.row-1] isKindOfClass:[NSArray class]] ) {

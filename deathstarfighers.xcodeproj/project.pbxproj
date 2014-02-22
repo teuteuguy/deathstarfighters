@@ -24,7 +24,6 @@
 		4AF20F5E18A61DF700D2B8E1 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AF20F5D18A61DF700D2B8E1 /* AppDelegate.m */; };
 		4AF20F6118A61DF700D2B8E1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4AF20F5F18A61DF700D2B8E1 /* Main.storyboard */; };
 		4AF20F6418A61DF700D2B8E1 /* FirstViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AF20F6318A61DF700D2B8E1 /* FirstViewController.m */; };
-		4AF20F6718A61DF700D2B8E1 /* SecondViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AF20F6618A61DF700D2B8E1 /* SecondViewController.m */; };
 		4AF20F6918A61DF700D2B8E1 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4AF20F6818A61DF700D2B8E1 /* Images.xcassets */; };
 		4AF20F7018A61DF700D2B8E1 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AF20F6F18A61DF700D2B8E1 /* XCTest.framework */; };
 		4AF20F7118A61DF700D2B8E1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AF20F4D18A61DF700D2B8E1 /* Foundation.framework */; };
@@ -74,8 +73,6 @@
 		4AF20F6018A61DF700D2B8E1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		4AF20F6218A61DF700D2B8E1 /* FirstViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FirstViewController.h; sourceTree = "<group>"; };
 		4AF20F6318A61DF700D2B8E1 /* FirstViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FirstViewController.m; sourceTree = "<group>"; };
-		4AF20F6518A61DF700D2B8E1 /* SecondViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SecondViewController.h; sourceTree = "<group>"; };
-		4AF20F6618A61DF700D2B8E1 /* SecondViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SecondViewController.m; sourceTree = "<group>"; };
 		4AF20F6818A61DF700D2B8E1 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		4AF20F6E18A61DF700D2B8E1 /* deathstarfighersTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = deathstarfighersTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4AF20F6F18A61DF700D2B8E1 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
@@ -166,8 +163,6 @@
 				4AF20F8918A6213100D2B8E1 /* SHUBaccaConnection.m */,
 				4AF20F6218A61DF700D2B8E1 /* FirstViewController.h */,
 				4AF20F6318A61DF700D2B8E1 /* FirstViewController.m */,
-				4AF20F6518A61DF700D2B8E1 /* SecondViewController.h */,
-				4AF20F6618A61DF700D2B8E1 /* SecondViewController.m */,
 				4AF20F6818A61DF700D2B8E1 /* Images.xcassets */,
 				4AF20F5418A61DF700D2B8E1 /* Supporting Files */,
 				4AF20F8518A6205700D2B8E1 /* ThirdViewController.h */,
@@ -320,7 +315,6 @@
 				4ACE4A1318A65A090082DDFE /* SHUItemListViewController.m in Sources */,
 				4AAF841218A8BE43003765A4 /* SHUSimpleListViewController.m in Sources */,
 				4AAF840F18A8ABFE003765A4 /* Utils.m in Sources */,
-				4AF20F6718A61DF700D2B8E1 /* SecondViewController.m in Sources */,
 				4AF20F8A18A6213200D2B8E1 /* SHUBaccaConnection.m in Sources */,
 				4AF20F8718A6205700D2B8E1 /* ThirdViewController.m in Sources */,
 				4ACE4A0F18A6543F0082DDFE /* SHUMenuTableViewController.m in Sources */,

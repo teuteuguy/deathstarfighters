@@ -11,6 +11,7 @@
 
 @protocol SHUBaccaConnectionDelegates <NSObject>
 
+- (void)updating;
 - (void)doneUpdating;
 
 @end
@@ -19,9 +20,12 @@
 
 @property (nonatomic, weak) id <SHUBaccaConnectionDelegates> delegate;
 
+@property (nonatomic, retain) NSTimer               * connectionTimer;
+
 @property (nonatomic, retain) NSMutableArray        * shus;
 @property (nonatomic, retain) NSMutableArray        * shuAllMapAnnotations;
 @property (nonatomic, retain) NSMutableArray        * shuMapAnnotations;
+@property (nonatomic, retain) NSMutableArray        * shuConfigs;
 @property (nonatomic, retain) NSMutableArray        * shuStatuses;
 @property (strong, nonatomic) NSMutableArray        * shuRouteOverlays;
 

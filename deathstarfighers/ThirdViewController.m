@@ -11,17 +11,17 @@
 #import "SHUMenuTableViewController.h"
 #import "Utils.h"
 
-#define shubaccaQueue1 dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0 ) //1
-#define shubaccaGetIDsUrl @"http://api.shubacca.com/shu?consumer_key=4a8e628392a504eb746c37e1b0044f0f&sort=id,desc" //2
+@interface ThirdViewController ()
 
-@interface ThirdViewController () {
-}
 @end
 
 @implementation ThirdViewController
 
 @synthesize shus;
+@synthesize shuStatuses;
+@synthesize shuConfigs;
 
+@synthesize activityView;
 
 - (void)awakeFromNib
 {
@@ -30,8 +30,6 @@
 
 - (void)viewDidLoad
 {
-    //shubaccaConnection = [SHUBaccaConnection sharedSHUBaccaConnection];
-    //[shubaccaConnection update];
     
     [super viewDidLoad];
     
@@ -39,87 +37,46 @@
     [self.tableView setBackgroundColor:[UIColor colorWithRed:122.0 green:155.0 blue:207.0 alpha:1]];
     
     self.navigationItem.title = @"SHUs";
+    
+    activityView = [[UIActivityIndicatorView alloc] initWithFrame:CGRectMake(0, 0, 20, 20)];
+    activityView.hidden = TRUE;
+    [activityView startAnimating];
 
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
- 
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
-
-//    self.navigationItem.leftBarButtonItem = self.editButtonItem;
-//    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject:)];
-//    self.navigationItem.rightBarButtonItem = addButton;
+    UIBarButtonItem * activityButton = [[UIBarButtonItem alloc] initWithCustomView:activityView ];
+    self.navigationItem.rightBarButtonItem = activityButton;
+    
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-    //    UIView * bview = [[UIView alloc] init];
-    //    bview.backgroundColor = [UIColor colorWithRed:119/255.0 green:153/255.0 blue:203/255.0 alpha:1];
-    //    [self.tableView setBackgroundView:bview];
-    UIColor * backgroundcolor = [UIColor colorWithRed:119/255.0 green:153/255.0 blue:203/255.0 alpha:1];
-    [self.tableView setBackgroundColor:backgroundcolor];
-    [self.tableView setSeparatorColor:backgroundcolor];
-    [self.navigationController.navigationBar setBackgroundColor:backgroundcolor];
+
+//    UIColor * backgroundcolor = [UIColor colorWithRed:119/255.0 green:153/255.0 blue:203/255.0 alpha:1];
+//    [self.tableView setBackgroundColor:backgroundcolor];
+//    [self.tableView setSeparatorColor:backgroundcolor];
+//    [self.navigationController.navigationBar setBackgroundColor:backgroundcolor];
     
-    dispatch_async(shubaccaQueue1, ^{
-        NSData* data = [NSData dataWithContentsOfURL:[NSURL URLWithString:shubaccaGetIDsUrl]];
-        [self performSelectorOnMainThread:@selector(fetchedIDs:) withObject:data waitUntilDone:YES];
-    });
+    [[SHUBaccaConnection sharedSHUBaccaConnection] setDelegate:self];
+    
 }
 
 
-//- (void)insertNewObject:(id)sender
-//{
-//    if (!_objects) {
-//        _objects = [[NSMutableArray alloc] init];
-//    }
-//    [_objects insertObject:[NSDate date] atIndex:0];
-//    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
-//    [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-//}
+- (void)updating {
 
+    activityView.hidden = FALSE;
 
-- (void)fetchedIDs:(NSData *)responseData {
-    //parse out the json data
-    NSError * error;
-    
-    NSArray * responseArray = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableContainers error:&error];
-    
-    if ( error != Nil ) {
-        NSLog( @"Could not make connection with server" );
-    } else {
-        
-        if ( shus == Nil ) {
-            shus = [[NSMutableArray alloc] init];
-        }
-        [shus removeAllObjects];
-        [self.tableView reloadData];
-
-        for( NSDictionary * object in responseArray ) {
-//
-//            NSURL * url = [NSURL URLWithString:[NSString stringWithFormat:@"http://api.shubacca.com/shu/%@/status?consumer_key=4a8e628392a504eb746c37e1b0044f0f&sort=id,desc&limit=2", [object valueForKey:@"id"]]];
-//            
-//            NSData* data = [NSData dataWithContentsOfURL:url];
-//            NSArray * statusArray = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
-//            
-//            if ( error != Nil ) {
-//                NSLog( @"Could not make status connection with server" );
-//            } else {
-//                
-//                NSMutableDictionary * dict = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
-//                                              [object valueForKey:@"id"], @"id",
-//                                              [[NSDictionary alloc] initWithDictionary:object], @"array",
-//                                              nil];
-            [shus insertObject:object atIndex:0];
-            
-            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
-            [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-            [self.tableView reloadData];
-//
-//            }
-//            
-        }
-    }
 }
+
+- (void)doneUpdating {
+    shus = [[NSArray alloc] initWithArray:[[SHUBaccaConnection sharedSHUBaccaConnection] shus]];
+    shuConfigs = [[NSArray alloc] initWithArray:[[SHUBaccaConnection sharedSHUBaccaConnection] shuConfigs]];
+    shuStatuses = [[NSArray alloc] initWithArray:[[SHUBaccaConnection sharedSHUBaccaConnection] shuStatuses]];
+    
+    [self.tableView reloadData];
+    
+    NSLog(@"ThirdView Done Updating");
+    
+    activityView.hidden = TRUE;
+}
+
 
 - (void)didReceiveMemoryWarning
 {
@@ -131,17 +88,12 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    // Return the number of sections.
-    //NSLog( @"numberOfSectionsInTableView" );
     return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    // Return the number of rows in the section.
-    NSInteger nb_of_rows = [shus count];
-    //NSLog( @"%i", nb_of_rows );
-    return nb_of_rows;
+    return shus.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -155,23 +107,12 @@
     UILabel * status_secs_ago = (UILabel *)[cell viewWithTag:102];
     UILabel * gps_secs_ago = (UILabel *)[cell viewWithTag:103];
 
-    title.text = [shus[indexPath.row] valueForKey:@"description"];
-    telephone.text = [shus[indexPath.row] valueForKey:@"telephone_number"];
-    //status_secs_ago.text = [shus[indexPath.row] valueForKey:@"last_known_status_datetime"];
-    //gps_secs_ago.text = [shus[indexPath.row] valueForKey:@"last_known_gps_datetime"];
-    status_secs_ago.text = [Utils intervalInSecsAgo:[shus[indexPath.row] valueForKey:@"last_known_status_datetime"]];
-    gps_secs_ago.text = [Utils intervalInSecsAgo:[shus[indexPath.row] valueForKey:@"last_known_gps_datetime"]];
-//    
-//    int interval = (int)[[NSDate date] timeIntervalSinceDate:[formatter dateFromString: [shus[indexPath.row] valueForKey:@"last_known_gps_datetime"]]];
-//    if ( interval < 60 ) {
-//        secs_ago.text = [NSString stringWithFormat:@"%.02is ago", interval];
-//    } else if ( interval < 60 * 60 ) {
-//        secs_ago.text = [NSString stringWithFormat:@"%.02im:%.02i ago", (int)(interval / 60), (interval % 60) ];
-//    } else if ( interval < 60 * 60 * 24 ) {
-//        secs_ago.text = [NSString stringWithFormat:@"%.02i:%.02i:%.02i ago", (int)(interval / 3600), (int)((interval % 3600) / 60), (interval % 60) ];
-//    } else {
-//        secs_ago.text = [NSString stringWithFormat:@"%id %.02i:%.02i:%.02i ago", (int)(interval / (3600 * 24)), (int)((interval % (3600 * 24)) / 3600), (int)((interval % 3600) / 60), (interval % 60) ];
-//    }
+    NSDictionary * shu = shus[indexPath.row];
+    
+    title.text = [[shu valueForKey:@"description"] description];
+    telephone.text = [[shu valueForKey:@"telephone_number"] description];
+    status_secs_ago.text = [Utils intervalInSecsAgo:[[shu valueForKey:@"last_known_status_datetime"] description] ];
+    gps_secs_ago.text = [Utils intervalInSecsAgo:[[shu valueForKey:@"last_known_gps_datetime"] description] ];
     
     return cell;
 }
@@ -221,17 +162,14 @@
 // In a story board-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-    //NSLog([sender description]);
     
     if ([[segue identifier] isEqualToString:@"showMenu"]) {
         NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
-//        //NSDate *object = _objects[indexPath.row];
-        //[[segue destinationViewController] navigationItem].title = [shus[indexPath.row] valueForKey:@"id"];
-        //NSLog( @"%@", [shus[indexPath.row] valueForKey:@"id"] );
-        [[segue destinationViewController] setItemSHU:shus[indexPath.row]];
+        [[segue destinationViewController] setStatusItems:[shuStatuses objectAtIndex:indexPath.row] ];
+        [[segue destinationViewController] setConfigItems:[shuConfigs objectAtIndex:indexPath.row] ];
+        [[segue destinationViewController] setItemSHU:[shus objectAtIndex:indexPath.row] ];
     }
+
 }
 
 

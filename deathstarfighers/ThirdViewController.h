@@ -10,13 +10,19 @@
 
 #import "SHUBaccaConnection.h"
 
-@interface ThirdViewController : UITableViewController {
-    //SHUBaccaConnection  * shubaccaConnection;
-    NSMutableArray  * shus;
+@interface ThirdViewController : UITableViewController <SHUBaccaConnectionDelegates> {
+    NSArray * shus;
+    NSArray * shuConfigs;
+    NSArray * shuStatuses;
+    
+    UIActivityIndicatorView * activityView;
 }
 
-@property (nonatomic, retain) NSMutableArray    * shus;
 
-//@property (nonatomic, retain) SHUBaccaConnection    * shubaccaConnection;
+@property (nonatomic, retain) NSArray * shus;
+@property (nonatomic, retain) NSArray * shuConfigs;
+@property (nonatomic, retain) NSArray * shuStatuses;
+
+@property (nonatomic, retain) UIActivityIndicatorView * activityView;
 
 @end

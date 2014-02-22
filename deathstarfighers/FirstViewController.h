@@ -12,14 +12,16 @@
 #import "SHUBaccaConnection.h"
 
 @interface FirstViewController : UIViewController <MKMapViewDelegate, SHUBaccaConnectionDelegates> {
-    UIView          * activityView;
-    MKMapView       * map;
+
+    UIActivityIndicatorView     * activityView;
+    //UIView                      * activityView;
+    MKMapView                   * map;
 }
 
-@property (strong, nonatomic) IBOutlet  UIView          * activityView;
-@property (strong, nonatomic) IBOutlet  MKMapView       * map;
+@property (strong, nonatomic) IBOutlet  UIActivityIndicatorView     * activityView;
+@property (strong, nonatomic) IBOutlet  MKMapView                   * map;
 
-@property (strong, nonatomic)           NSMutableArray  * routeOverlays;
-@property (strong, nonatomic)           NSMutableArray  * mappoints;
+@property (strong, nonatomic)           NSMutableArray              * routeOverlays;
+@property (strong, nonatomic)           NSMutableArray              * mappoints;
 
 @end

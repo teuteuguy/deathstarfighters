@@ -8,15 +8,15 @@
 
 #import <UIKit/UIKit.h>
 #import <MapKit/MapKit.h>
+#import "SHUBaccaConnection.h"
 
-@interface SHUMenuTableViewController : UITableViewController {
-    NSDictionary  * configItems;
-    NSDictionary * statusItems;
+@interface SHUMenuTableViewController : UITableViewController <SHUBaccaConnectionDelegates>  {
+//    NSDictionary  * configItems;
+//    NSDictionary * statusItems;
 }
 
-@property (nonatomic, retain) NSDictionary * configItems;
-@property (nonatomic, retain) NSDictionary * statusItems;
-
-@property (strong, nonatomic) NSDictionary * itemSHU;
+@property (nonatomic, retain) NSDictionary  * configItems;
+@property (nonatomic, retain) NSArray       * statusItems;
+@property (strong, nonatomic) NSDictionary  * itemSHU;
 
 @end

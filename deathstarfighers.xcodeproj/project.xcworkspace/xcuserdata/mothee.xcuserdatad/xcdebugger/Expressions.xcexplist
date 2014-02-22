@@ -3,10 +3,10 @@
    version = "1.0">
    <ContextStates>
       <ContextState
-         contextName = "-[SHUMenuTableViewController fetchedList:]:SHUMenuTableViewController.m">
+         contextName = "-[SHUMenuTableViewController tableView:cellForRowAtIndexPath:]:SHUMenuTableViewController.m">
       </ContextState>
       <ContextState
-         contextName = "-[SHUMenuTableViewController tableView:cellForRowAtIndexPath:]:SHUMenuTableViewController.m">
+         contextName = "-[SHUMenuTableViewController fetchedList:]:SHUMenuTableViewController.m">
       </ContextState>
       <ContextState
          contextName = "-[ThirdViewController tableView:cellForRowAtIndexPath:]:ThirdViewController.m">
@@ -29,6 +29,14 @@
          <PersistentStrings>
             <PersistentString
                value = "self.itemList">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[ThirdViewController prepareForSegue:sender:]:ThirdViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "[SHUBaccaConnection sharedSHUBaccaConnection]">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

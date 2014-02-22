@@ -42,30 +42,23 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     
-    [map removeOverlays:[[SHUBaccaConnection sharedSHUBaccaConnection] shuRouteOverlays]];
     [[SHUBaccaConnection sharedSHUBaccaConnection] setDelegate:self];
-    [[SHUBaccaConnection sharedSHUBaccaConnection] update];
     
-    //_routeOverlays = nil;
-    //_routeOverlays = [[NSMutableArray alloc] init];
-    //[map removeOverlays:_routeOverlays];
-    
+}
+
+- (void)updating {
     activityView.hidden = false;
-    
-    //dispatch_async(shubaccaQueue1, ^{
-    //    NSData* data = [NSData dataWithContentsOfURL:[NSURL URLWithString:shubaccaGetIDsUrl]];
-    //    [self performSelectorOnMainThread:@selector(fetchedIDs:) withObject:data waitUntilDone:YES];
-    //});
 }
 
 - (void)doneUpdating {
-    NSLog(@"Awesmoe");
+    //[map removeOverlays:[[SHUBaccaConnection sharedSHUBaccaConnection] shuRouteOverlays]];
+    [[SHUBaccaConnection sharedSHUBaccaConnection] setDelegate:self];
     [map removeAnnotations:[map annotations]];
-    NSArray * routeOverlays = [[SHUBaccaConnection sharedSHUBaccaConnection] shuRouteOverlays];
+    //NSArray * routeOverlays = [[SHUBaccaConnection sharedSHUBaccaConnection] shuRouteOverlays];
     NSArray * annotations = [[SHUBaccaConnection sharedSHUBaccaConnection] shuMapAnnotations];
-    [map addOverlays:routeOverlays];
+    //[map addOverlays:routeOverlays];
     [map showAnnotations:annotations animated:YES];
-    
+    NSLog(@"Map Done Updating");
     activityView.hidden = true;
 }
 
