@@ -11,16 +11,12 @@
 
 
 #define shubaccaQueue dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0 ) //1
-#define shubaccaGetIDsUrl @"http://api.shubacca.com/shu?consumer_key=4a8e628392a504eb746c37e1b0044f0f&sort=id,asc" //2
+#define shubaccaGetIDsUrl @"http://api.shubacca.com/shu?consumer_key=4a8e628392a504eb746c37e1b0044f0f&sort=description,asc" //2
 #define shubaccaGetStatusesForIDUrl(shu,type) [NSString stringWithFormat:@"http://api.shubacca.com/shu/%@/%@?consumer_key=4a8e628392a504eb746c37e1b0044f0f&sort=id,desc&limit=10", shu, [type lowercaseString]] //2
 #define shubaccaGetConfigForIDUrl(shu) [NSString stringWithFormat:@"http://api.shubacca.com/shu/%@/config?consumer_key=4a8e628392a504eb746c37e1b0044f0f&sort=id,desc&limit=1", shu]
 
 @implementation SHUBaccaConnection {
-//    struct {
-//        //unsigned int didFinishLoadingItem:1;
-//        //unsigned int didFailWithError:1;
-//        void doneUpdating;
-//    } delegateRespondsTo;
+    dispatch_queue_t backgroundQueue;
 }
 
 @synthesize connectionTimer;
@@ -46,6 +42,7 @@
 
 - (id)init {
     if (self = [super init]) {
+        backgroundQueue = dispatch_queue_create( "com.shubacca.api.bgqueue", NULL );
         [self update];
     }
     return self;
@@ -60,31 +57,125 @@
     if (delegate != aDelegate) {
         delegate = aDelegate;
         
-        //delegateRespondsTo.didFinishLoadingItem = [delegate respondsToSelector:@selector(something:didFinishLoadingItem:)];
-        //delegateRespondsTo.didFailWithError = [delegate respondsToSelector:@selector(something:didFailWithError:)];
     }
 }
 
 - (void)update {
-    NSLog( @"SHUBaccaConnection: update" );
 
-    dispatch_async( shubaccaQueue, ^{
-        NSData* data = [NSData dataWithContentsOfURL:[NSURL URLWithString:shubaccaGetIDsUrl]];
-        if ( data != nil ) {
-            [self fetchedIDs:data];
-        }
+    NSLog( @"SHUBaccaConnection: Updating data" );
+    [delegate updating];
+    
+//    dispatch_async( shubaccaQueue, ^{
+//        NSData* data = [NSData dataWithContentsOfURL:[NSURL URLWithString:shubaccaGetIDsUrl]];
+//        if ( data != nil ) {
+//            [self fetchedIDs:data];
+//        }
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            NSLog( @"SHUBaccaConnection: doneUpdating" );
+//            [delegate doneUpdating]; // 2
+//            connectionTimer = [NSTimer scheduledTimerWithTimeInterval:10.0 target:self selector:@selector(timerTicked:) userInfo:nil repeats:NO];
+//        });
+//    });
+
+
+    dispatch_async( backgroundQueue, ^(void) {
+        [self fetchSHUs];
+        
+        NSLog( @"SHUBaccaConnection: Setting timer" );
         dispatch_async(dispatch_get_main_queue(), ^{
-            NSLog( @"SHUBaccaConnection: doneUpdating" );
-            [delegate doneUpdating]; // 2
+            [delegate doneUpdating];
             connectionTimer = [NSTimer scheduledTimerWithTimeInterval:10.0 target:self selector:@selector(timerTicked:) userInfo:nil repeats:NO];
         });
     });
-//    
-//    dispatch_async( shubaccaQueue, ^{
-//        NSData* data = [NSData dataWithContentsOfURL:[NSURL URLWithString:shubaccaGetIDsUrl]];
-//        [self performSelectorOnMainThread:@selector(fetchedIDs:) withObject:data waitUntilDone:NO];
-//    });
+    
 }
+
+- (void)fetchSHUs {
+    NSError * error = Nil;
+    
+    NSLog( @"SHUBaccaConnection: Fetching SHUs" );
+    
+    NSData * data = [NSData dataWithContentsOfURL:[NSURL URLWithString:shubaccaGetIDsUrl]];
+
+    if ( data == nil ) {
+        NSLog( @"SHUBaccaConnection: Failed to get SHUs" );
+    } else {
+        NSArray * shuArray = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
+        
+        if ( error != Nil ) {
+            NSLog( @"SHUBaccaConnection: There was an error trying to retrieve the SHU JSON from the server" );
+        } else {
+            NSLog( @"SHUBaccaConnection: Retrieved SHU JSON from the server: %i shus to analyze", [shuArray count] );
+            
+            if ( shus == Nil )
+                shus = [[NSMutableArray alloc] init];
+            [shus removeAllObjects];
+            
+            if ( shuMapAnnotations == Nil )
+                shuMapAnnotations = [[NSMutableArray alloc] init];
+            [shuMapAnnotations removeAllObjects];
+            
+            if ( shuConfigs == Nil )
+                shuConfigs = [[NSMutableArray alloc] init];
+            
+            [shuConfigs removeAllObjects];
+            
+            for( NSMutableDictionary * shu in shuArray ) {
+
+                
+                int shu_id = [[[shu valueForKey:@"id"] description] integerValue];
+                
+                MKPointAnnotation * point = [Utils annotationFromGPS:[[shu valueForKey:@"last_known_gps_coordinates"] description]
+                                                           withTitle:[[shu valueForKey:@"description"] description]
+                                                         andSubTitle:[[shu valueForKey:@"last_known_gps_datetime"] description] ];
+                
+                if ( point == NULL ) {
+                    [shuMapAnnotations addObject: [NSNull null] ];
+                } else {
+                    [shuMapAnnotations addObject: point ];
+                }
+                
+                [shus addObject:shu];
+                int shu_index = [shus count] - 1;
+
+                NSLog( @"SHUBaccaConnection: Found SHU %i stored at index %i", shu_id, shu_index );
+                
+                //dispatch_async( dispatch_queue_create( "com.shubacca.api.bgqueue_menu", NULL ), ^(void) {
+                //    [self fetchConfigForShu:[[shu valueForKey:@"id"] description]];
+                    [delegate foundSHUWithID:shu_id atIndex:shu_index];
+                //});
+                
+            }
+        }
+    }
+    
+}
+
+- (void)fetchConfigForShu:(NSString *)shu_id {
+    NSError * error = Nil;
+    
+    NSLog( @"SHUBaccaConnection: Fetching Config" );
+    
+    NSData * data = [NSData dataWithContentsOfURL:[NSURL URLWithString:shubaccaGetConfigForIDUrl(shu_id)]];
+    
+    if ( data == nil ) {
+        NSLog( @"SHUBaccaConnection: Failed to get Config" );
+    } else {
+        NSArray * configArray = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
+        
+        if ( error != Nil ) {
+            NSLog( @"SHUBaccaConnection: There was an error trying to retrieve the SHU JSON from the server" );
+        } else {
+            NSLog( @"SHUBaccaConnection: Retrieved Config from the server: %i fields to analyze", [configArray count] );
+            
+            
+            [shuConfigs addObject:[[NSMutableDictionary alloc] initWithDictionary:[configArray objectAtIndex:0]]];
+            
+        }
+    }
+    
+}
+
 
 - (void)fetchedIDs:(NSData *)responseData {
 

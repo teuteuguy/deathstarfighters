@@ -15,8 +15,11 @@
 //    NSDictionary * statusItems;
 }
 
+@property (nonatomic, retain) UIActivityIndicatorView * activityView;
+
 @property (nonatomic, retain) NSDictionary  * configItems;
 @property (nonatomic, retain) NSArray       * statusItems;
+//@property (nonatomic, retain) NSDictionary       * statusItems;
 @property (strong, nonatomic) NSDictionary  * itemSHU;
 
 @end

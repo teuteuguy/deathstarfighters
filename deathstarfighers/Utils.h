@@ -7,9 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <MapKit/MapKit.h>
 
 @interface Utils : NSObject
 
 + (NSString *)intervalInSecsAgo:(NSString *)stringDate;
+
++ (MKPointAnnotation *)annotationFromGPS:(NSString *)string withTitle:(NSString *)title andSubTitle:(NSString *)subtitle;
 
 @end

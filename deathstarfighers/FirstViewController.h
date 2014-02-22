@@ -18,6 +18,8 @@
     MKMapView                   * map;
 }
 
+@property (strong, nonatomic)           NSMutableArray              * annotations;
+
 @property (strong, nonatomic) IBOutlet  UIActivityIndicatorView     * activityView;
 @property (strong, nonatomic) IBOutlet  MKMapView                   * map;
 

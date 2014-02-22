@@ -12,6 +12,10 @@
 @protocol SHUBaccaConnectionDelegates <NSObject>
 
 - (void)updating;
+
+- (void)foundSHUWithID:(int)id atIndex:(int)index;
+
+//- (void)updatedJustHighLevel;
 - (void)doneUpdating;
 
 @end

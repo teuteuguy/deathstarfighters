@@ -45,6 +45,8 @@
     UIBarButtonItem * activityButton = [[UIBarButtonItem alloc] initWithCustomView:activityView ];
     self.navigationItem.rightBarButtonItem = activityButton;
     
+    shus = nil;//[[NSMutableArray alloc] init];
+    
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -56,6 +58,8 @@
     
     [[SHUBaccaConnection sharedSHUBaccaConnection] setDelegate:self];
     
+    [self doneUpdating];
+    
 }
 
 
@@ -65,10 +69,16 @@
 
 }
 
+- (void)foundSHUWithID:(int)id atIndex:(int)index {
+    
+//    [self.tableView insertRowsAtIndexPaths:<#(NSArray *)#> withRowAnimation:<#(UITableViewRowAnimation)#>]
+    
+}
+
 - (void)doneUpdating {
     shus = [[NSArray alloc] initWithArray:[[SHUBaccaConnection sharedSHUBaccaConnection] shus]];
     shuConfigs = [[NSArray alloc] initWithArray:[[SHUBaccaConnection sharedSHUBaccaConnection] shuConfigs]];
-    shuStatuses = [[NSArray alloc] initWithArray:[[SHUBaccaConnection sharedSHUBaccaConnection] shuStatuses]];
+//    shuStatuses = [[NSArray alloc] initWithArray:[[SHUBaccaConnection sharedSHUBaccaConnection] shuStatuses]];
     
     [self.tableView reloadData];
     
@@ -112,7 +122,7 @@
     title.text = [[shu valueForKey:@"description"] description];
     telephone.text = [[shu valueForKey:@"telephone_number"] description];
     status_secs_ago.text = [Utils intervalInSecsAgo:[[shu valueForKey:@"last_known_status_datetime"] description] ];
-    gps_secs_ago.text = [Utils intervalInSecsAgo:[[shu valueForKey:@"last_known_gps_datetime"] description] ];
+    gps_secs_ago.text = [NSString stringWithFormat:@"GPS: %@", [Utils intervalInSecsAgo:[[shu valueForKey:@"last_known_gps_datetime"] description] ] ];
     
     return cell;
 }
@@ -165,8 +175,9 @@
     
     if ([[segue identifier] isEqualToString:@"showMenu"]) {
         NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
-        [[segue destinationViewController] setStatusItems:[shuStatuses objectAtIndex:indexPath.row] ];
-        [[segue destinationViewController] setConfigItems:[shuConfigs objectAtIndex:indexPath.row] ];
+        //[[segue destinationViewController] setStatusItems:[shuStatuses objectAtIndex:indexPath.row] ];
+        //[[segue destinationViewController] setConfigItems:[shuConfigs objectAtIndex:indexPath.row] ];
+        //[[segue destinationViewController] setConfigItems:[[[SHUBaccaConnection sharedSHUBaccaConnection] shuConfigs] objectAtIndex:indexPath.row] ];
         [[segue destinationViewController] setItemSHU:[shus objectAtIndex:indexPath.row] ];
     }
 

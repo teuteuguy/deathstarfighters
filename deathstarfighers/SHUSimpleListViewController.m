@@ -41,9 +41,9 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-    UIColor * backgroundcolor = [UIColor colorWithRed:119/255.0 green:153/255.0 blue:203/255.0 alpha:1];
-    [self.tableView setBackgroundColor:backgroundcolor];
-    [self.tableView setSeparatorColor:backgroundcolor];
+//    UIColor * backgroundcolor = [UIColor colorWithRed:119/255.0 green:153/255.0 blue:203/255.0 alpha:1];
+//    [self.tableView setBackgroundColor:backgroundcolor];
+//    [self.tableView setSeparatorColor:backgroundcolor];
 }
 
 

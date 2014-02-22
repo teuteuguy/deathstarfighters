@@ -17,6 +17,9 @@
 //#define shubaccaGetConfigForIDUrl(shu) [NSString stringWithFormat:@"http://api.shubacca.com/shu/%@/config?consumer_key=4a8e628392a504eb746c37e1b0044f0f&sort=id,desc&limit=1", shu] //2
 ////#define shubaccaGetStatusesForIDUrl(shu) [NSString stringWithFormat:@"http://api.shubacca.com/shu/%@/status?consumer_key=4a8e628392a504eb746c37e1b0044f0f&sort=id,desc&limit=1", shu] //2
 
+#define shubaccaGetConfigForIDUrl(shu) [NSString stringWithFormat:@"http://api.shubacca.com/shu/%@/config?consumer_key=4a8e628392a504eb746c37e1b0044f0f&sort=id,desc&limit=1", shu]
+#define shubaccaGetLastStatusForIDUrl(shu) [NSString stringWithFormat:@"http://api.shubacca.com/shu/%@/status?consumer_key=4a8e628392a504eb746c37e1b0044f0f&sort=id,desc&limit=1", shu]
+
 @interface SHUMenuTableViewController ()
 
 @end
@@ -24,6 +27,8 @@
 @implementation SHUMenuTableViewController {
     int shuIndex;
 }
+
+@synthesize activityView;
 
 @synthesize itemSHU;
 @synthesize configItems;
@@ -42,112 +47,120 @@
 {
     [super viewDidLoad];
 
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
- 
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    activityView = [[UIActivityIndicatorView alloc] initWithFrame:CGRectMake(0, 0, 20, 20)];
+    activityView.hidden = TRUE;
+    [activityView startAnimating];
+    
+    UIBarButtonItem * activityButton = [[UIBarButtonItem alloc] initWithCustomView:activityView ];
+    self.navigationItem.rightBarButtonItem = activityButton;
 }
 
-
-//- (void)fetchedConfigList:(NSData *)responseData {
-//    NSError * error;
-//    NSArray * responseArray = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableContainers error:&error];
-//    
-//    if ( error != Nil ) {
-//        NSLog( @"Could not make connection with server" );
-//    } else {
-//        
-//        
-//        
-//        for( NSDictionary * object in responseArray ) {
-//        
-////            NSMutableDictionary * newDictionary = [[NSMutableDictionary alloc] init];
-////            NSMutableDictionary * opDictionary = [[NSMutableDictionary alloc] init];
-////            
-////            for( NSString * key in [object allKeys] ) {
-////                if ( [key isEqualToString:@"operators"] ) {
-////                    for ( NSDictionary * operator in [object objectForKey:key] ) {
-////                        [opDictionary addEntriesFromDictionary:[NSDictionary dictionaryWithObjectsAndKeys:[operator objectForKey:@"ezlink_pin"], [operator objectForKey:@"ezlink_can"], nil]];
-////                    }
-////                } else {
-////                    [newDictionary addEntriesFromDictionary:[NSDictionary dictionaryWithObjectsAndKeys:[[object objectForKey:key] description], key, nil]];
-////                }
-////                
-////            }
-////            
-////            [newDictionary addEntriesFromDictionary:opDictionary];
-////            [configItems addObject:newDictionary];
-//            configItems = [[NSDictionary alloc] initWithDictionary:object];
-//            //[configItems addObject:object];
-//            [self.tableView reloadData];
-//        }
-//    }
-//}
-
-//- (void)fetchedStatusList:(NSData *)responseData {
-//    //parse out the json data
-//    NSError * error;
-//    
-//    NSArray * responseArray = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableContainers error:&error];
-//    
-//    if ( error != Nil ) {
-//        NSLog( @"Could not make connection with server" );
-//    } else {
-//        
-//
-//        for( NSDictionary * object in responseArray ) {
-//            
-//            statusItems = [[NSDictionary alloc] initWithDictionary:object];
-//            [self.tableView reloadData];
-//            
-//        }
-//    }
-//}
 
 
 
 - (void)viewWillAppear:(BOOL)animated {
-    UIColor * backgroundcolor = [UIColor colorWithRed:119/255.0 green:153/255.0 blue:203/255.0 alpha:1];
-    [self.tableView setBackgroundColor:backgroundcolor];
-    [self.tableView setSeparatorColor:backgroundcolor];
-    
-    //configItems = nil;
-    //statusItems = nil;
-    //[self.tableView reloadData];
     
     [[SHUBaccaConnection sharedSHUBaccaConnection] setDelegate:self];
     
-//    dispatch_async(shubaccaQueue2, ^{
-//        NSData * data = [ NSData dataWithContentsOfURL:[NSURL URLWithString:shubaccaGetConfigForIDUrl( [self.itemSHU valueForKey:@"id"] ) ] ];
-//        [self performSelectorOnMainThread:@selector(fetchedConfigList:) withObject:data waitUntilDone:YES];
-//    });
-//    dispatch_async(shubaccaQueue3, ^{
-//        NSData * data = [ NSData dataWithContentsOfURL:[NSURL URLWithString:shubaccaGetStatusesForIDUrl( [self.itemSHU valueForKey:@"id"] ) ] ];
-//        [self performSelectorOnMainThread:@selector(fetchedStatusList:) withObject:data waitUntilDone:YES];
-//    });
+    [self doneUpdating];
 }
 
 
 - (void)updating {
-    [self.tableView reloadData];
-}
-- (void)doneUpdating {
+    activityView.hidden = FALSE;
     [self.tableView reloadData];
 }
 
-- (void)setConfigItems:(NSDictionary *)newConfigItems
-{
-    if (configItems != newConfigItems) {
-        configItems = newConfigItems;
-    }
+- (void)doneUpdating {
+    
+    dispatch_async( dispatch_queue_create( "com.shubacca.api.bgqueue_config", NULL ), ^(void) {
+        [self fetchConfig];
+    });
+    dispatch_async( dispatch_queue_create( "com.shubacca.api.bgqueue_status", NULL ), ^(void) {
+        [self fetchLastStatus];
+    });
+    
+    activityView.hidden = TRUE;
+    
 }
-- (void)setStatusItems:(NSArray *)newStatusItems
-{
-    if (statusItems != newStatusItems) {
-        statusItems = newStatusItems;
-    }
+
+- (void)foundSHUWithID:(int)id atIndex:(int)index {
+    
 }
+
+
+
+- (void)fetchConfig {
+    NSError * error = Nil;
+    
+    NSLog( @"Menu: Fetching Config" );
+    
+    NSData * data = [NSData dataWithContentsOfURL:[NSURL URLWithString:shubaccaGetConfigForIDUrl([[itemSHU valueForKey:@"id" ] description] )]];
+    
+    if ( data == nil ) {
+        NSLog( @"Menu: Failed to get Config" );
+    } else {
+        NSArray * configArray = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
+        
+        if ( error != Nil ) {
+            NSLog( @"Menu: There was an error trying to retrieve the SHU JSON from the server" );
+        } else {
+            NSLog( @"Menu: Retrieved Config from the server: %i fields to analyze", [configArray count] );
+            
+            configItems = [[NSMutableDictionary alloc] initWithDictionary:[configArray objectAtIndex:0]];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.tableView reloadData];
+            });
+            
+        }
+    }
+    
+}
+
+- (void)fetchLastStatus {
+    NSError * error = Nil;
+    
+    NSLog( @"Menu: Fetching Last status" );
+    
+    NSData * data = [NSData dataWithContentsOfURL:[NSURL URLWithString:shubaccaGetLastStatusForIDUrl([[itemSHU valueForKey:@"id" ] description] )]];
+    
+    if ( data == nil ) {
+        NSLog( @"Menu: Failed to get last status" );
+    } else {
+        NSArray * statusArray = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
+        
+        if ( error != Nil ) {
+            NSLog( @"Menu: There was an error trying to retrieve the SHU last status from the server" );
+        } else {
+            NSLog( @"Menu: Retrieved status from the server: %i fields to analyze", [statusArray count] );
+            
+            statusItems = [[NSMutableArray alloc] initWithArray:statusArray];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.tableView reloadData];
+            });
+            
+        }
+    }
+    
+}
+
+
+
+
+//- (void)setConfigItems:(NSDictionary *)newConfigItems
+//{
+//    if (configItems != newConfigItems) {
+//        configItems = newConfigItems;
+//    }
+//}
+//- (void)setStatusItems:(NSArray *)newStatusItems
+//{
+//    if (statusItems != newStatusItems) {
+//        statusItems = newStatusItems;
+//    }
+//}
 - (void)setItemSHU:(id)newItemSHU
 {
     if (itemSHU != newItemSHU) {
@@ -205,8 +218,11 @@
             return 1;
             break;
         case 2:
-            return [configItems count];
-            return 0;
+            if ( configItems != nil ) {
+                return [configItems count];
+            } else {
+                return 0;
+            }
             break;
         default:
             return 0;

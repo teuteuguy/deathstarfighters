@@ -37,4 +37,24 @@
     return [NSString stringWithFormat:@"Error"];
 }
 
++ (MKPointAnnotation *)annotationFromGPS:(NSString *)string withTitle:(NSString *)title andSubTitle:(NSString *)subtitle {
+    if ( [string isEqual:@"<null>"] ) {
+        
+        return NULL;
+        
+    } else {
+        
+        NSArray * strings = [string componentsSeparatedByString:@","];
+        float latitude = [(NSNumber *)[strings objectAtIndex:0] floatValue];
+        float longitude= [(NSNumber *)[strings objectAtIndex:1] floatValue];
+        
+        MKPointAnnotation * point = [[MKPointAnnotation alloc] init];
+        point.coordinate = CLLocationCoordinate2DMake( latitude, longitude );
+        point.title = title;
+        point.subtitle = [Utils intervalInSecsAgo:subtitle];
+        
+        return point;
+    }
+}
+
 @end

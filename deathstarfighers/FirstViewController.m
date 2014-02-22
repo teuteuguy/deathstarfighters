@@ -23,6 +23,7 @@
 
 @implementation FirstViewController
 
+@synthesize annotations;
 @synthesize activityView;
 @synthesize map;
 @synthesize mappoints;
@@ -48,16 +49,45 @@
 
 - (void)updating {
     activityView.hidden = false;
+    
+    if ( annotations == nil )
+        annotations = [[NSMutableArray alloc] init];
+    [annotations removeAllObjects];
+    
+//    [map removeAnnotations:[map annotations]];
+    
+}
+
+- (void)foundSHUWithID:(int)id atIndex:(int)index {
+    
+    MKPointAnnotation * point = [[[SHUBaccaConnection sharedSHUBaccaConnection] shuMapAnnotations] objectAtIndex:index];
+    
+    if ( [point isEqual:[NSNull null]] ) {
+        
+    } else {
+        
+        if ( [[[[[[SHUBaccaConnection sharedSHUBaccaConnection] shus] objectAtIndex:index] valueForKey:@"virtual"] description] isEqual:@"0"] ) {
+            [annotations addObject:point];
+//            [map addAnnotation: point];
+//            [map showAnnotations:[map annotations] animated:YES];
+            
+        }
+    }
+    
 }
 
 - (void)doneUpdating {
     //[map removeOverlays:[[SHUBaccaConnection sharedSHUBaccaConnection] shuRouteOverlays]];
-    [[SHUBaccaConnection sharedSHUBaccaConnection] setDelegate:self];
-    [map removeAnnotations:[map annotations]];
+    //[[SHUBaccaConnection sharedSHUBaccaConnection] setDelegate:self];
+    //[map removeAnnotations:[map annotations]];
     //NSArray * routeOverlays = [[SHUBaccaConnection sharedSHUBaccaConnection] shuRouteOverlays];
-    NSArray * annotations = [[SHUBaccaConnection sharedSHUBaccaConnection] shuMapAnnotations];
+    //NSArray * annotations = [[SHUBaccaConnection sharedSHUBaccaConnection] shuMapAnnotations];
     //[map addOverlays:routeOverlays];
+    //[map showAnnotations:annotations animated:YES];
+    
+    [map removeAnnotations:[map annotations]];
     [map showAnnotations:annotations animated:YES];
+    
     NSLog(@"Map Done Updating");
     activityView.hidden = true;
 }
