@@ -45,6 +45,7 @@
     
     [[SHUBaccaConnection sharedSHUBaccaConnection] setDelegate:self];
     
+    [[SHUBaccaConnection sharedSHUBaccaConnection] update];
 }
 
 - (void)updating {

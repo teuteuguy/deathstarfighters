@@ -47,7 +47,14 @@
     
     shus = nil;//[[NSMutableArray alloc] init];
     
+    UIRefreshControl *refresh = [[UIRefreshControl alloc] init];
+    refresh.attributedTitle = [[NSAttributedString alloc] initWithString:@"Pull to Refresh"];
+    [refresh addTarget:self action:@selector(forceUpdate) forControlEvents:UIControlEventValueChanged];
+    self.refreshControl = refresh;
+    
 }
+
+
 
 - (void)viewWillAppear:(BOOL)animated {
 
@@ -58,10 +65,15 @@
     
     [[SHUBaccaConnection sharedSHUBaccaConnection] setDelegate:self];
     
-    [self doneUpdating];
-    
+    [self forceUpdate];
 }
 
+
+- (void)forceUpdate {
+    
+    [[SHUBaccaConnection sharedSHUBaccaConnection] update];
+    [self doneUpdating];
+}
 
 - (void)updating {
 
@@ -85,6 +97,7 @@
     NSLog(@"ThirdView Done Updating");
     
     activityView.hidden = TRUE;
+    [self.refreshControl endRefreshing];
 }
 
 
