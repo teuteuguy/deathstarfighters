@@ -13,7 +13,7 @@
 
 - (void)updating;
 
-- (void)foundSHUWithID:(int)id atIndex:(int)index;
+- (void)foundSHUWithID:(NSInteger)id atIndex:(NSInteger)index;
 
 //- (void)updatedJustHighLevel;
 - (void)doneUpdating;
@@ -36,5 +36,7 @@
 + (id)sharedSHUBaccaConnection;
 
 - (void)update;
+
+- (NSMutableArray *)fetchLastStatusForId:(NSInteger)shu_id;
 
 @end

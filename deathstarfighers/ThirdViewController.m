@@ -94,7 +94,7 @@
     
     [self.tableView reloadData];
     
-    NSLog(@"ThirdView Done Updating");
+    NSLog(@"ThirdView: Done Updating");
     
     activityView.hidden = TRUE;
     [self.refreshControl endRefreshing];
@@ -129,13 +129,49 @@
     UILabel * telephone = (UILabel *)[cell viewWithTag:101];
     UILabel * status_secs_ago = (UILabel *)[cell viewWithTag:102];
     UILabel * gps_secs_ago = (UILabel *)[cell viewWithTag:103];
+    UIProgressView * progressView = (UIProgressView *)[cell viewWithTag:104];
+    UILabel * chargingLabel = (UILabel *)[cell viewWithTag:105];
 
     NSDictionary * shu = shus[indexPath.row];
+    
+    NSString * shu_id = [[shu valueForKey:@"id"] description];
     
     title.text = [[shu valueForKey:@"description"] description];
     telephone.text = [[shu valueForKey:@"telephone_number"] description];
     status_secs_ago.text = [Utils intervalInSecsAgo:[[shu valueForKey:@"last_known_status_datetime"] description] ];
     gps_secs_ago.text = [NSString stringWithFormat:@"GPS: %@", [Utils intervalInSecsAgo:[[shu valueForKey:@"last_known_gps_datetime"] description] ] ];
+    
+    dispatch_async( dispatch_queue_create( "com.shubacca.api.bgqueue_status_for_battery", NULL ), ^(void) {
+        
+        NSArray * tempArray = [[SHUBaccaConnection sharedSHUBaccaConnection] fetchLastStatusForId:[shu_id integerValue]];
+        
+        if ( tempArray != nil ) {
+            
+            NSLog(@"ThirdView: cellForRowAtIndexPath: found last status update for SHU %@", shu_id);
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                float progress = [[[[tempArray objectAtIndex:0] valueForKey:@"fuel_battery_state"] description] floatValue];
+                progressView.progress = progress / 100;
+                
+                bool charging = ( [[[[tempArray objectAtIndex:0] valueForKey:@"charge_state"] description] integerValue] == 1 );
+                
+                if ( charging ) {
+                    chargingLabel.hidden = NO;
+                    progressView.progressTintColor = [UIColor blueColor];
+                } else if ( progress < 30 ) {
+                    chargingLabel.hidden = YES;
+                    progressView.progressTintColor = [UIColor redColor];
+                } else {
+                    chargingLabel.hidden = YES;
+                    progressView.progressTintColor = [UIColor greenColor];
+                }
+                
+            });
+            
+        }
+        
+    });
+
     
     return cell;
 }

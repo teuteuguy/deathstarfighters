@@ -28,6 +28,8 @@
 @synthesize map;
 @synthesize mappoints;
 
+@synthesize updateTimer;
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -59,7 +61,7 @@
     
 }
 
-- (void)foundSHUWithID:(int)id atIndex:(int)index {
+- (void)foundSHUWithID:(NSInteger)id atIndex:(NSInteger)index {
     
     MKPointAnnotation * point = [[[SHUBaccaConnection sharedSHUBaccaConnection] shuMapAnnotations] objectAtIndex:index];
     
@@ -69,6 +71,7 @@
         
         if ( [[[[[[SHUBaccaConnection sharedSHUBaccaConnection] shus] objectAtIndex:index] valueForKey:@"virtual"] description] isEqual:@"0"] ) {
             [annotations addObject:point];
+            
 //            [map addAnnotation: point];
 //            [map showAnnotations:[map annotations] animated:YES];
             
@@ -76,6 +79,12 @@
     }
     
 }
+
+- (void)timerTicked:(NSTimer*)timer {
+    NSLog( @"Map: Timer" );
+    [[SHUBaccaConnection sharedSHUBaccaConnection] update];
+}
+
 
 - (void)doneUpdating {
     //[map removeOverlays:[[SHUBaccaConnection sharedSHUBaccaConnection] shuRouteOverlays]];
@@ -91,6 +100,8 @@
     
     NSLog(@"Map Done Updating");
     activityView.hidden = true;
+    
+    updateTimer = [NSTimer scheduledTimerWithTimeInterval:10.0 target:self selector:@selector(timerTicked:) userInfo:nil repeats:NO];
 }
 
 //- (void)fetchedIDs:(NSData *)responseData {
@@ -207,7 +218,108 @@
 //    }
 }
 
+
+//-(MKAnnotationView *) mapView:(MKMapView *)mapView viewForAnnotation:(id<MKAnnotation>)annotation {
+//    MKPinAnnotationView *MyPin=[[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"current"];
+//    //MyPin.pinColor = MKPinAnnotationColorPurple;
+//    
+//    UIButton *advertButton = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
+//    [advertButton addTarget:self action:@selector(button:) forControlEvents:UIControlEventTouchUpInside];
+//    
+//    /*MyPin.rightCalloutAccessoryView = advertButton;
+//     MyPin.draggable = YES;
+//     
+//     MyPin.animatesDrop=TRUE;
+//     MyPin.canShowCallout = YES;*/
+//    MyPin.highlighted = NO;
+//    MyPin.image = [UIImage imageNamed:@"myCustomPinImage"];
+//    
+//    return MyPin;
+//}
+
+- (void)annotationButton:(id)sender {
+    
+}
+
 - (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id<MKAnnotation>)annotation {
+    //MKPinAnnotationView * mypin = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"current"];
+    //mypin.pinColor = MKPinAnnotationColorRed;
+    
+    //UIButton * advertButton = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
+    //[advertButton addTarget:self action:@selector(annotationButton:) forControlEvents:UIControlEventTouchUpInside];
+    //mypin.rightCalloutAccessoryView = advertButton;
+    
+    //mypin.animatesDrop = TRUE;
+    //mypin.canShowCallout = YES;
+    //mypin.highlighted = NO;
+//    mypin.image
+    MKAnnotationView * mypin = (MKAnnotationView *)[map dequeueReusableAnnotationViewWithIdentifier:@"current"];
+    if ( mypin == nil ) {
+        
+        mypin = [[MKAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"current"];
+        //mypin = [[MKAnnotationView alloc] initWithFrame:CGRectMake(0, 0, 25, 10)];
+        mypin.frame = CGRectMake(0, 0, 50, 25);
+        
+        UIImageView * imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 50, 25)];
+        imageView.tag = 1;
+        imageView.contentMode = UIViewContentModeScaleAspectFit;
+        imageView.clipsToBounds = YES;
+        imageView.image = [UIImage imageNamed:@"blue_car_103.png"];
+        
+        [mypin addSubview:imageView];
+        
+//        UIProgressView * progressView = [[UIProgressView alloc] initWithFrame:CGRectMake(0, 25, 50, 5)];
+//        progressView.tag = 2;
+//        progressView.progress = 0;
+//        progressView.progressTintColor = [UIColor redColor];
+//        
+//        [mypin addSubview:progressView];
+        
+        mypin.canShowCallout = YES;
+        
+    }
+    
+//    NSArray * strings = [[annotation title] componentsSeparatedByString:@": "];
+//    //MKPointAnnotation * temp = (MKPointAnnotation *)annotation;
+//    //float progress = 0;
+//    //((UIProgressView *)[mypin viewWithTag:2]).progress = progress;
+//    ((UIProgressView *)[mypin viewWithTag:2]).hidden = YES;
+//    
+//    if ( strings.count == 2 ) {
+//        //temp.title = [strings objectAtIndex:0];
+//        //progress = [(NSNumber *)[strings objectAtIndex:1] floatValue] / 100;
+//        
+//        dispatch_async( dispatch_queue_create( "com.shubacca.api.bgqueue_status_for_map", NULL ), ^(void) {
+//            
+//            NSArray * tempArray = [[SHUBaccaConnection sharedSHUBaccaConnection] fetchLastStatusForId:[[strings objectAtIndex:0] integerValue]];
+//            
+//            if ( tempArray != nil ) {
+//                
+//                NSLog(@"Map: viewForAnnotation: found last status update for SHU %@", [strings objectAtIndex:0]);
+//
+//                dispatch_async(dispatch_get_main_queue(), ^{
+//                    float progress = [[[[tempArray objectAtIndex:0] valueForKey:@"fuel_battery_state"] description] floatValue];
+//                    ((UIProgressView *)[mypin viewWithTag:2]).progress = progress / 100;
+//                    if ( progress < 50 ) {
+//                        ((UIProgressView *)[mypin viewWithTag:2]).progressTintColor = [UIColor redColor];
+//                        ((UIProgressView *)[mypin viewWithTag:2]).hidden = NO;
+////                    } else {
+////                        ((UIProgressView *)[mypin viewWithTag:2]).tintColor = [UIColor greenColor];
+//                    }
+//                });
+//                
+//                //point.subtitle = [point.subtitle stringByAppendingString:[NSString stringWithFormat:@";%f", [[[[tempArray objectAtIndex:0] valueForKey:@"fuel_battery_state"] description] floatValue]]];
+//            }
+//            
+//        });
+//    }
+    
+    
+    
+    mypin.annotation = annotation;
+    
+    return mypin;
+    
 //    if (annotation == self.calloutAnnotation) {
 //        CalloutMapAnnotationView *calloutMapAnnotationView = (CalloutMapAnnotationView *)[self.mapView dequeueReusableAnnotationViewWithIdentifier:@"CalloutAnnotation"];
 //        if (!calloutMapAnnotationView) {

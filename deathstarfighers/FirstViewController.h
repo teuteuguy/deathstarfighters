@@ -14,9 +14,10 @@
 @interface FirstViewController : UIViewController <MKMapViewDelegate, SHUBaccaConnectionDelegates> {
 
     UIActivityIndicatorView     * activityView;
-    //UIView                      * activityView;
     MKMapView                   * map;
 }
+
+@property (nonatomic, retain)           NSTimer                     * updateTimer;
 
 @property (strong, nonatomic)           NSMutableArray              * annotations;
 
